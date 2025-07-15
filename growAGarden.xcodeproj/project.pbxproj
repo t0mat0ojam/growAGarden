@@ -104,12 +104,12 @@
 			children = (
 				33DB894D2E26459300DC1C15 /* Preview Content */,
 				33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */,
-				33DB89202E262E6400DC1C15 /* ContentView.swift */,
 				33DB89222E262E6400DC1C15 /* Item.swift */,
 				33DB89242E262E6800DC1C15 /* Assets.xcassets */,
 				33DB894E2E26471200DC1C15 /* AuthManager.swift */,
 				33DB89502E26473300DC1C15 /* MainAppView.swift */,
 				33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */,
+				33DB89202E262E6400DC1C15 /* ContentView.swift */,
 				33DB89542E2665EB00DC1C15 /* NextPageView.swift */,
 			);
 			path = growAGarden;
