@@ -1,10 +1,3 @@
-//
-//  growAGardenApp.swift
-//  growAGarden
-//
-//  Created by Tomoharu Hayakawa on 2025/07/15.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -25,8 +18,11 @@ struct growAGardenApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainAppView()
+                .modelContainer(sharedModelContainer)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
+
+
+

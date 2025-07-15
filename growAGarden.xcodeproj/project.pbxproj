@@ -11,10 +11,12 @@
 		33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89202E262E6400DC1C15 /* ContentView.swift */; };
 		33DB89232E262E6400DC1C15 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89222E262E6400DC1C15 /* Item.swift */; };
 		33DB89252E262E6800DC1C15 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33DB89242E262E6800DC1C15 /* Assets.xcassets */; };
-		33DB89282E262E6800DC1C15 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33DB89272E262E6800DC1C15 /* Preview Assets.xcassets */; };
 		33DB89322E262E6800DC1C15 /* growAGardenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89312E262E6800DC1C15 /* growAGardenTests.swift */; };
 		33DB893C2E262E6800DC1C15 /* growAGardenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB893B2E262E6800DC1C15 /* growAGardenUITests.swift */; };
 		33DB893E2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */; };
+		33DB894F2E26471200DC1C15 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB894E2E26471200DC1C15 /* AuthManager.swift */; };
+		33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89502E26473300DC1C15 /* MainAppView.swift */; };
+		33DB89532E26474E00DC1C15 /* LoginSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,12 +42,14 @@
 		33DB89202E262E6400DC1C15 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		33DB89222E262E6400DC1C15 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		33DB89242E262E6800DC1C15 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		33DB89272E262E6800DC1C15 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		33DB892D2E262E6800DC1C15 /* growAGardenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = growAGardenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB89312E262E6800DC1C15 /* growAGardenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenTests.swift; sourceTree = "<group>"; };
 		33DB89372E262E6800DC1C15 /* growAGardenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = growAGardenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB893B2E262E6800DC1C15 /* growAGardenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenUITests.swift; sourceTree = "<group>"; };
 		33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		33DB894E2E26471200DC1C15 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		33DB89502E26473300DC1C15 /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
+		33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSignUpView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,21 +100,16 @@
 		33DB891D2E262E6400DC1C15 /* growAGarden */ = {
 			isa = PBXGroup;
 			children = (
+				33DB894D2E26459300DC1C15 /* Preview Content */,
 				33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */,
 				33DB89202E262E6400DC1C15 /* ContentView.swift */,
 				33DB89222E262E6400DC1C15 /* Item.swift */,
 				33DB89242E262E6800DC1C15 /* Assets.xcassets */,
-				33DB89262E262E6800DC1C15 /* Preview Content */,
+				33DB894E2E26471200DC1C15 /* AuthManager.swift */,
+				33DB89502E26473300DC1C15 /* MainAppView.swift */,
+				33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */,
 			);
 			path = growAGarden;
-			sourceTree = "<group>";
-		};
-		33DB89262E262E6800DC1C15 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				33DB89272E262E6800DC1C15 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		33DB89302E262E6800DC1C15 /* growAGardenTests */ = {
@@ -128,6 +127,13 @@
 				33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */,
 			);
 			path = growAGardenUITests;
+			sourceTree = "<group>";
+		};
+		33DB894D2E26459300DC1C15 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -234,7 +240,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33DB89282E262E6800DC1C15 /* Preview Assets.xcassets in Resources */,
 				33DB89252E262E6800DC1C15 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,6 +266,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */,
+				33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */,
+				33DB89532E26474E00DC1C15 /* LoginSignUpView.swift in Sources */,
+				33DB894F2E26471200DC1C15 /* AuthManager.swift in Sources */,
 				33DB89232E262E6400DC1C15 /* Item.swift in Sources */,
 				33DB891F2E262E6400DC1C15 /* growAGardenApp.swift in Sources */,
 			);
