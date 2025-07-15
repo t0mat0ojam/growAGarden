@@ -6,55 +6,89 @@ struct LoginSignUpView: View {
     @State private var password = ""
 
     var body: some View {
-        VStack(spacing: 24) {
-            Text("Welcome to GrowAGarden")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top, 40)
+        ZStack {
+            // Soft gradient background
+            LinearGradient(
+                gradient: Gradient(colors: [Color(.systemMint).opacity(0.2), Color(.systemTeal).opacity(0.07)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
-            TextField("Email", text: $email)
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
+            VStack(spacing: 28) {
+                Spacer()
 
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
+                // Welcome Title
+                Text("Welcome to GrowAGarden")
+                    .font(.system(size: 32, weight: .semibold, design: .rounded))
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 20)
 
-            VStack(spacing: 12) {
-                Button(action: {
-                    // Normally, you would do validation/authentication here.
-                    authManager.isLoggedIn = true
-                }) {
-                    Text("Login")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                // Email Field
+                TextField("Email", text: $email)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 16)
+                    .background(Color(.systemGray6).opacity(0.96))
+                    .cornerRadius(12)
+                    .font(.system(size: 18, design: .rounded))
+
+                // Password Field
+                SecureField("Password", text: $password)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 16)
+                    .background(Color(.systemGray6).opacity(0.96))
+                    .cornerRadius(12)
+                    .font(.system(size: 18, design: .rounded))
+
+                VStack(spacing: 16) {
+                    // Login Button
+                    Button(action: {
+                        authManager.isLoggedIn = true
+                    }) {
+                        Text("Login")
+                            .font(.system(size: 20, weight: .semibold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color(.systemBlue).opacity(0.75), Color.blue.opacity(0.85)]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .foregroundColor(.white)
+                            .cornerRadius(15)
+                            .shadow(color: Color(.systemBlue).opacity(0.15), radius: 6, x: 0, y: 3)
+                    }
+
+                    // Sign Up Button
+                    Button(action: {
+                        authManager.isLoggedIn = true
+                    }) {
+                        Text("Sign Up")
+                            .font(.system(size: 20, weight: .semibold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color(.systemGreen).opacity(0.65), Color(.systemGreen).opacity(0.85)]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .foregroundColor(.white)
+                            .cornerRadius(15)
+                            .shadow(color: Color(.systemGreen).opacity(0.15), radius: 6, x: 0, y: 3)
+                    }
                 }
 
-                Button(action: {
-                    // Normally, you would do registration here.
-                    authManager.isLoggedIn = true
-                }) {
-                    Text("Sign Up")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
+                Spacer()
             }
-            .padding(.top)
-
-            Spacer()
+            .padding(.horizontal, 32)
         }
-        .padding(.horizontal, 32)
     }
 }
-
 
