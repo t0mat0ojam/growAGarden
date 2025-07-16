@@ -10,8 +10,15 @@ struct Plant: Identifiable {
     let id = UUID()
     let habit: String
     var state: PlantState = .seed
-    var growthLevel: Int = 0 // 🌱 -> 🌿 -> 🌳 -> 🌲
+    var growthLevel: Int = 0
+    var position: GridPosition
 }
+
+struct GridPosition: Hashable {
+    let row: Int
+    let col: Int
+}
+
 
 // MARK: - Main View: NextPageView (Your Forest)
 
@@ -24,64 +31,66 @@ struct NextPageView: View {
     @State private var showJournaling = false
     @State private var showSettings = false
 
-    let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 4)
+    let gridSize = 4 // 4x4 grid
 
     init(habits: [String] = [
         "Sleep for 8 hours",
         "Read for 30 minutes",
         "Workout for 30 minutes"
     ]) {
-        _plants = State(initialValue: habits.map { Plant(habit: $0) })
+        _plants = State(initialValue: habits.enumerated().map { index, habit in
+            let row = index / 4
+            let col = index % 4
+            return Plant(habit: habit, position: GridPosition(row: row, col: col))
+        })
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [Color.green.opacity(0.13), Color.brown.opacity(0.09)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                ).ignoresSafeArea()
+                Image("grass_tile")
+                    .resizable(resizingMode: .tile)
+                    .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Main forest grid content
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("Your Forest")
-                            .font(.system(size: 34, weight: .heavy, design: .rounded))
-                            .foregroundColor(.green)
-                            .padding(.leading, 18)
-                            .padding(.top, 16)
+                    Text("Your Forest")
+                        .font(.system(size: 34, weight: .heavy, design: .rounded))
+                        .foregroundColor(.black)
+                        .padding(.top, 16)
+                        .frame(maxWidth: .infinity, alignment: .center)
 
-                        ScrollView {
-                            LazyVGrid(columns: columns, spacing: 30) {
-                                ForEach(plants) { plant in
+                    ScrollView {
+                        LazyVGrid(columns: Array(repeating: .init(.fixed(100)), count: gridSize), spacing: 20) {
+                            ForEach(0..<(gridSize * gridSize), id: \.self) { index in
+                                let row = index / gridSize
+                                let col = index % gridSize
+                                let pos = GridPosition(row: row, col: col)
+
+                                if let plant = plants.first(where: { $0.position == pos }) {
                                     PlantView(plant: plant)
                                         .onTapGesture {
                                             selectedPlant = plant
                                             showCheckIn = true
                                         }
-                                        .padding(.vertical, 6)
-                                        .offset(
-                                            x: CGFloat.random(in: -8...8),
-                                            y: CGFloat.random(in: -8...8)
-                                        )
+                                } else {
+                                    GrassTileView()
                                 }
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 30)
                         }
+                        .frame(maxWidth: .infinity, alignment: .center) // center the grid
+                        .padding(.bottom, 40)
                     }
 
                     Spacer()
 
-                    // Footer navigation bar
+
+                    // Footer nav
                     HStack {
                         Button(action: { showJournaling = true }) {
                             VStack {
                                 Image(systemName: "book.closed")
                                     .font(.title2)
-                                Text("Journaling")
-                                    .font(.caption)
+                                Text("Journaling").font(.caption)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -93,19 +102,16 @@ struct NextPageView: View {
                             VStack {
                                 Image(systemName: "leaf.circle.fill")
                                     .font(.title2)
-                                Text("Home")
-                                    .font(.caption)
+                                Text("Home").font(.caption)
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        // Home doesn't navigate; you are on the home screen
 
                         Button(action: { showSettings = true }) {
                             VStack {
                                 Image(systemName: "gearshape")
                                     .font(.title2)
-                                Text("Settings")
-                                    .font(.caption)
+                                Text("Settings").font(.caption)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -130,30 +136,37 @@ struct NextPageView: View {
     }
 }
 
+
 // MARK: - Plant View
 
 struct PlantView: View {
     let plant: Plant
 
     var body: some View {
-        VStack(spacing: 4) {
-            ZStack {
-                Circle()
-                    .fill(colorForState(plant.state))
-                    .frame(width: 52, height: 52)
-                    .shadow(color: Color.green.opacity(0.08), radius: 7, x: 0, y: 2)
+        ZStack {
+            // Background tile image
+            Image("grass_tile")
+                .resizable(resizingMode: .tile)
+                .aspectRatio(1, contentMode: .fill)
+                .frame(width: 100, height: 100) // match tile size
+                .clipped()
 
+            // Plant emoji + habit text
+            VStack(spacing: 4) {
                 Text(emojiForGrowth(plant))
-                    .font(.title)
-            }
+                    .font(.system(size: 40))
+                    .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
 
-            Text(plant.habit)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 80)
+                Text(plant.habit)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 80)
+            }
+            .padding(8)
         }
+        .frame(width: 100, height: 100) // make tiles consistent in size
     }
 
     func colorForState(_ state: PlantState) -> Color {
@@ -172,6 +185,16 @@ struct PlantView: View {
         case (.sprout, _): return "🌲"
         case (.wilt, _): return "🥀"
         }
+    }
+}
+
+struct GrassTileView: View {
+    var body: some View {
+        Image("grass_tile")
+            .resizable(resizingMode: .tile)
+            .aspectRatio(1, contentMode: .fill)
+            .frame(width: 100, height: 100)
+            .clipped()
     }
 }
 
