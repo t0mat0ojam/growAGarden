@@ -102,7 +102,7 @@ struct ContentView: View {
                     .padding(.horizontal, 48)
                     .padding(.bottom, 30)
                     .navigationDestination(isPresented: $showNextPage) {
-                        NextPageView()
+                        NextPageView(habits: habits)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
