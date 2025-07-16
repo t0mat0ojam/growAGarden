@@ -19,10 +19,13 @@ struct NextPageView: View {
     @State private var plants: [Plant]
     @State private var selectedPlant: Plant?
     @State private var showCheckIn = false
-
+    
+    // Footer navigation state
+    @State private var showJournaling = false
+    @State private var showSettings = false
+    
     let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 4)
-
-    // You can pass real habits later from ContentView
+    
     init(habits: [String] = [
         "Sleep for 8 hours",
         "Read for 30 minutes",
@@ -30,42 +33,91 @@ struct NextPageView: View {
     ]) {
         _plants = State(initialValue: habits.map { Plant(habit: $0) })
     }
-
+    
     var body: some View {
-        ZStack {
-            // Forest background
-            LinearGradient(
-                colors: [Color.green.opacity(0.13), Color.brown.opacity(0.09)],
-                startPoint: .top,
-                endPoint: .bottom
-            ).ignoresSafeArea()
-
-            VStack(alignment: .leading) {
-                Text("Your Forest")
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
-                    .foregroundColor(.green)
-                    .padding(.leading, 18)
-                    .padding(.top, 16)
-
-                // LazyVGrid – uniform but natural layout
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 30) {
-                        ForEach(plants) { plant in
-                            PlantView(plant: plant)
-                                .onTapGesture {
-                                    selectedPlant = plant
-                                    showCheckIn = true
+        NavigationStack {
+            ZStack {
+                LinearGradient(
+                    colors: [Color.green.opacity(0.13), Color.brown.opacity(0.09)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ).ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Main forest grid content
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Your Forest")
+                            .font(.system(size: 34, weight: .heavy, design: .rounded))
+                            .foregroundColor(.green)
+                            .padding(.leading, 18)
+                            .padding(.top, 16)
+                        
+                        ScrollView {
+                            LazyVGrid(columns: columns, spacing: 30) {
+                                ForEach(plants) { plant in
+                                    PlantView(plant: plant)
+                                        .onTapGesture {
+                                            selectedPlant = plant
+                                            showCheckIn = true
+                                        }
+                                        .padding(.vertical, 6)
+                                        .offset(x: CGFloat.random(in: -8...8), y: CGFloat.random(in: -8...8))
                                 }
-                                .padding(.vertical, 6)
-                                .offset(x: CGFloat.random(in: -8...8), y: CGFloat.random(in: -8...8))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 30)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 30)
+                    
+                    Spacer()
+                    
+                    // Footer navigation bar
+                    HStack {
+                        Button(action: { showJournaling = true }) {
+                            VStack {
+                                Image(systemName: "book.closed")
+                                    .font(.title2)
+                                Text("Journaling")
+                                    .font(.caption)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .sheet(isPresented: $showJournaling) {
+                            JournalingView()
+                        }
+                        
+                        Button(action: { }) {
+                            VStack {
+                                Image(systemName: "leaf.circle.fill")
+                                    .font(.title2)
+                                Text("Home")
+                                    .font(.caption)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        // Home doesn't navigate; you are on the home screen
+                        
+                        Button(action: { showSettings = true }) {
+                            VStack {
+                                Image(systemName: "gearshape")
+                                    .font(.title2)
+                                Text("Settings")
+                                    .font(.caption)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .sheet(isPresented: $showSettings) {
+                            SettingsView()
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 10)
+                    .background(.thinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .shadow(color: .black.opacity(0.08), radius: 8, y: -2)
+                    .padding(.bottom, 18)
                 }
             }
-
-            // Sheet to check in on a habit
             .sheet(isPresented: $showCheckIn) {
                 if let idx = plants.firstIndex(where: { $0.id == selectedPlant?.id }) {
                     HabitCheckInView(plant: $plants[idx])

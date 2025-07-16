@@ -18,6 +18,8 @@
 		33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89502E26473300DC1C15 /* MainAppView.swift */; };
 		33DB89532E26474E00DC1C15 /* LoginSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */; };
 		33DB89552E2665EB00DC1C15 /* NextPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89542E2665EB00DC1C15 /* NextPageView.swift */; };
+		33DB895D2E27657400DC1C15 /* JournalingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB895C2E27657400DC1C15 /* JournalingView.swift */; };
+		33DB895F2E27658B00DC1C15 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB895E2E27658B00DC1C15 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,8 @@
 		33DB89502E26473300DC1C15 /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
 		33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSignUpView.swift; sourceTree = "<group>"; };
 		33DB89542E2665EB00DC1C15 /* NextPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPageView.swift; sourceTree = "<group>"; };
+		33DB895C2E27657400DC1C15 /* JournalingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalingView.swift; sourceTree = "<group>"; };
+		33DB895E2E27658B00DC1C15 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +115,8 @@
 				33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */,
 				33DB89202E262E6400DC1C15 /* ContentView.swift */,
 				33DB89542E2665EB00DC1C15 /* NextPageView.swift */,
+				33DB895C2E27657400DC1C15 /* JournalingView.swift */,
+				33DB895E2E27658B00DC1C15 /* SettingsView.swift */,
 			);
 			path = growAGarden;
 			sourceTree = "<group>";
@@ -271,6 +277,8 @@
 				33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */,
 				33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */,
 				33DB89532E26474E00DC1C15 /* LoginSignUpView.swift in Sources */,
+				33DB895F2E27658B00DC1C15 /* SettingsView.swift in Sources */,
+				33DB895D2E27657400DC1C15 /* JournalingView.swift in Sources */,
 				33DB89552E2665EB00DC1C15 /* NextPageView.swift in Sources */,
 				33DB894F2E26471200DC1C15 /* AuthManager.swift in Sources */,
 				33DB89232E262E6400DC1C15 /* Item.swift in Sources */,
