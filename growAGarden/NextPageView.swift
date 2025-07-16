@@ -19,13 +19,13 @@ struct NextPageView: View {
     @State private var plants: [Plant]
     @State private var selectedPlant: Plant?
     @State private var showCheckIn = false
-    
+
     // Footer navigation state
     @State private var showJournaling = false
     @State private var showSettings = false
-    
+
     let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 4)
-    
+
     init(habits: [String] = [
         "Sleep for 8 hours",
         "Read for 30 minutes",
@@ -33,7 +33,7 @@ struct NextPageView: View {
     ]) {
         _plants = State(initialValue: habits.map { Plant(habit: $0) })
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -42,7 +42,7 @@ struct NextPageView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 ).ignoresSafeArea()
-                
+
                 VStack(spacing: 0) {
                     // Main forest grid content
                     VStack(alignment: .leading, spacing: 0) {
@@ -51,7 +51,7 @@ struct NextPageView: View {
                             .foregroundColor(.green)
                             .padding(.leading, 18)
                             .padding(.top, 16)
-                        
+
                         ScrollView {
                             LazyVGrid(columns: columns, spacing: 30) {
                                 ForEach(plants) { plant in
@@ -61,16 +61,19 @@ struct NextPageView: View {
                                             showCheckIn = true
                                         }
                                         .padding(.vertical, 6)
-                                        .offset(x: CGFloat.random(in: -8...8), y: CGFloat.random(in: -8...8))
+                                        .offset(
+                                            x: CGFloat.random(in: -8...8),
+                                            y: CGFloat.random(in: -8...8)
+                                        )
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 30)
                         }
                     }
-                    
+
                     Spacer()
-                    
+
                     // Footer navigation bar
                     HStack {
                         Button(action: { showJournaling = true }) {
@@ -85,7 +88,7 @@ struct NextPageView: View {
                         .sheet(isPresented: $showJournaling) {
                             JournalingView()
                         }
-                        
+
                         Button(action: { }) {
                             VStack {
                                 Image(systemName: "leaf.circle.fill")
@@ -96,7 +99,7 @@ struct NextPageView: View {
                         }
                         .frame(maxWidth: .infinity)
                         // Home doesn't navigate; you are on the home screen
-                        
+
                         Button(action: { showSettings = true }) {
                             VStack {
                                 Image(systemName: "gearshape")
@@ -139,9 +142,11 @@ struct PlantView: View {
                     .fill(colorForState(plant.state))
                     .frame(width: 52, height: 52)
                     .shadow(color: Color.green.opacity(0.08), radius: 7, x: 0, y: 2)
+
                 Text(emojiForGrowth(plant))
                     .font(.title)
             }
+
             Text(plant.habit)
                 .font(.caption)
                 .fontWeight(.medium)

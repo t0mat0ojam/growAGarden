@@ -106,7 +106,6 @@
 		33DB891D2E262E6400DC1C15 /* growAGarden */ = {
 			isa = PBXGroup;
 			children = (
-				33DB894D2E26459300DC1C15 /* Preview Content */,
 				33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */,
 				33DB89222E262E6400DC1C15 /* Item.swift */,
 				33DB89242E262E6800DC1C15 /* Assets.xcassets */,
@@ -136,13 +135,6 @@
 				33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */,
 			);
 			path = growAGardenUITests;
-			sourceTree = "<group>";
-		};
-		33DB894D2E26459300DC1C15 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -445,7 +437,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"$(SRCROOT)/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -473,7 +464,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"$(SRCROOT)/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
