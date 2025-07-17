@@ -141,10 +141,11 @@ struct NextPageView: View {
     
     
     // MARK: - Plant View
-    
     struct PlantView: View {
         let plant: Plant
-        @State private var bounce = false
+
+        // Controls arrow Y offset (animated)
+        @State private var arrowOffset: CGFloat = -12
 
         var body: some View {
             ZStack {
@@ -152,34 +153,30 @@ struct NextPageView: View {
                     .resizable(resizingMode: .tile)
                     .aspectRatio(1, contentMode: .fill)
                     .frame(width: 100, height: 100)
-                    .clipped()
 
-                VStack(spacing: 4) {
-                    // Arrow container with fixed height and clipping to prevent arrow moving outside bounds
-                    ZStack {
-                        Image(systemName: "arrow.down")
-                            .font(.title3)
-                            .foregroundColor(.orange)
-                            .offset(y: bounce ? -6 : 0)
-                            .animation(
-                                Animation.easeInOut(duration: 1.2)
-                                    .repeatForever(autoreverses: true),
-                                value: bounce
-                            )
-                    }
-                    .frame(height: 20)  // Fix arrow container height
-                    .clipped()          // Prevent arrow overflow
-                    .onAppear {
-                        bounce = true
-                    }
-
+                VStack(spacing: 0) {
+                    Image(systemName: "arrow.down")
+                        .font(.title3)
+                        .foregroundColor(.orange)
+                        .offset(y: arrowOffset) // Use smoothly animated numeric value only!
+                    Spacer().frame(height: 4)
                     Text(emojiForGrowth(plant))
                         .font(.system(size: 40))
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
                 }
-                .padding(.top, 8)
+                .frame(width: 100, height: 100)
             }
             .frame(width: 100, height: 100)
+            .onAppear {
+                animateArrow()
+            }
+        }
+
+        // Animate up/down loop
+        func animateArrow() {
+            withAnimation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                arrowOffset = -10 // Change this value for more or less bounce (e.g., -12 to -10 = 2pt bounce)
+            }
         }
 
         func emojiForGrowth(_ plant: Plant) -> String {
@@ -193,7 +190,7 @@ struct NextPageView: View {
         }
     }
 
-    
+
     struct GrassTileView: View {
         var body: some View {
             Image("grass_tile")
