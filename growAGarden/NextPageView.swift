@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Plant Model1
+// MARK: - Plant Model
 
 enum PlantState: String, Codable {
     case seed, sprout, wilt
@@ -19,6 +19,26 @@ struct GridPosition: Hashable {
     let col: Int
 }
 
+// Enum to define the tabs for clearer selection management
+enum TabSelection: String, CaseIterable, Identifiable {
+    case journaling = "Journaling"
+    case home = "Home"
+    case stats = "Stats"
+    case settings = "Settings"
+
+    var id: String { self.rawValue }
+    
+    // SF Symbol for each tab
+    var systemImage: String {
+        switch self {
+        case .journaling: return "book.closed"
+        case .home: return "leaf.circle.fill"
+        case .stats: return "chart.bar.fill"
+        case .settings: return "gearshape"
+        }
+    }
+}
+
 
 // MARK: - Main View: NextPageView (Your Forest)
 
@@ -27,17 +47,13 @@ struct NextPageView: View {
     @State private var selectedPlant: Plant?
     @State private var showCheckIn = false
     
-    // Footer navigation state
-    @State private var showJournaling = false
-    @State private var showSettings = false
+    // State to control the currently selected tab for TabView
+    @State private var selectedTab: TabSelection = .home
     
     let gridSize = 4 // 4x4 grid
     
-    init(habits: [String] = [
-        "Sleep for 8 hours",
-        "Read for 30 minutes",
-        "Workout for 30 minutes"
-    ]) {
+    // Initializer now accepts a 'habits' array from ContentView
+    init(habits: [String]) {
         _plants = State(initialValue: habits.enumerated().map { index, habit in
             let row = index / 4
             let col = index % 4
@@ -47,6 +63,87 @@ struct NextPageView: View {
     
     var body: some View {
         NavigationStack {
+            TabView(selection: $selectedTab) {
+                // Journaling Tab Content
+                JournalingView()
+                    .tag(TabSelection.journaling)
+                    .tabItem {
+                        VStack {
+                            Image(systemName: TabSelection.journaling.systemImage)
+                                .font(.title2)
+                            Text(TabSelection.journaling.rawValue)
+                                .font(.caption)
+                        }
+                        .scaleEffect(selectedTab == .journaling ? 1.2 : 1.0)
+                        .fontWeight(selectedTab == .journaling ? .bold : .regular)
+                        .animation(.spring(), value: selectedTab)
+                    }
+                
+                // Home Tab Content (Original NextPageView content, now in a subview)
+                ForestGridView(plants: $plants, selectedPlant: $selectedPlant, showCheckIn: $showCheckIn)
+                    .tag(TabSelection.home)
+                    .tabItem {
+                        VStack {
+                            Image(systemName: TabSelection.home.systemImage)
+                                .font(.title2)
+                            Text(TabSelection.home.rawValue)
+                                .font(.caption)
+                        }
+                        .scaleEffect(selectedTab == .home ? 1.2 : 1.0)
+                        .fontWeight(selectedTab == .home ? .bold : .regular)
+                        .animation(.spring(), value: selectedTab)
+                    }
+                
+                // Stats Tab Content
+                StatsView()
+                    .tag(TabSelection.stats)
+                    .tabItem {
+                        VStack {
+                            Image(systemName: TabSelection.stats.systemImage)
+                                .font(.title2)
+                            Text(TabSelection.stats.rawValue)
+                                .font(.caption)
+                        }
+                        .scaleEffect(selectedTab == .stats ? 1.2 : 1.0)
+                        .fontWeight(selectedTab == .stats ? .bold : .regular)
+                        .animation(.spring(), value: selectedTab)
+                    }
+                
+                // Settings Tab Content
+                SettingsView()
+                    .tag(TabSelection.settings)
+                    .tabItem {
+                        VStack {
+                            Image(systemName: TabSelection.settings.systemImage)
+                                .font(.title2)
+                            Text(TabSelection.settings.rawValue)
+                                .font(.caption)
+                        }
+                        .scaleEffect(selectedTab == .settings ? 1.2 : 1.0)
+                        .fontWeight(selectedTab == .settings ? .bold : .regular)
+                        .animation(.spring(), value: selectedTab)
+                    }
+            }
+            .sheet(isPresented: $showCheckIn) {
+                if let idx = plants.firstIndex(where: { $0.id == selectedPlant?.id }) {
+                    HabitCheckInView(plant: $plants[idx])
+                }
+            }
+            // Hide the navigation bar's back button
+            .navigationBarBackButtonHidden(true)
+        }
+    }
+    
+    // New struct to encapsulate the original forest grid content with layout adjustments
+    struct ForestGridView: View {
+        @Binding var plants: [Plant]
+        @Binding var selectedPlant: Plant?
+        @Binding var showCheckIn: Bool
+        
+        let gridSize = 4 // 4x4 grid
+        let columns: [GridItem] = Array(repeating: .init(.fixed(100)), count: 4)
+        
+        var body: some View {
             ZStack {
                 Image("grass_tile")
                     .resizable(resizingMode: .tile)
@@ -60,7 +157,7 @@ struct NextPageView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                     
                     ScrollView {
-                        LazyVGrid(columns: Array(repeating: .init(.fixed(100)), count: gridSize), spacing: 20) {
+                        LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(0..<(gridSize * gridSize), id: \.self) { index in
                                 let row = index / gridSize
                                 let col = index % gridSize
@@ -69,7 +166,8 @@ struct NextPageView: View {
                                 if let plant = plants.first(where: { $0.position == pos }) {
                                     PlantView(plant: plant)
                                         .onTapGesture {
-                                            selectedPlant = plant // ← Set selected plant
+                                            selectedPlant = plant
+                                            showCheckIn = true
                                         }
                                 } else {
                                     GrassTileView()
@@ -78,67 +176,13 @@ struct NextPageView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.bottom, 40)
+                        .padding(.horizontal, 16)
                     }
-                    
                     Spacer()
-                    
-                    // Footer nav
-                    HStack {
-                        Button(action: { showJournaling = true }) {
-                            VStack {
-                                Image(systemName: "book.closed")
-                                    .font(.title2)
-                                Text("Journaling").font(.caption)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .sheet(isPresented: $showJournaling) {
-                            JournalingView()
-                        }
-                        
-                        Button(action: { }) {
-                            VStack {
-                                Image(systemName: "leaf.circle.fill")
-                                    .font(.title2)
-                                Text("Home").font(.caption)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        
-                        Button(action: { showSettings = true }) {
-                            VStack {
-                                Image(systemName: "gearshape")
-                                    .font(.title2)
-                                Text("Settings").font(.caption)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .sheet(isPresented: $showSettings) {
-                            SettingsView()
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(.thinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                    .shadow(color: .black.opacity(0.08), radius: 8, y: -2)
-                    .padding(.bottom, 18)
-                }
-                // Show check-in sheet only after selectedPlant is set
-                .onChange(of: selectedPlant) { newValue in
-                    if newValue != nil {
-                        showCheckIn = true
-                    }
-                }
-            }
-            .sheet(isPresented: $showCheckIn) {
-                if let idx = plants.firstIndex(where: { $0.id == selectedPlant?.id }) {
-                    HabitCheckInView(plant: $plants[idx])
                 }
             }
         }
     }
-    
     
     // MARK: - Plant View
     struct PlantView: View {
@@ -158,7 +202,7 @@ struct NextPageView: View {
                     Image(systemName: "arrow.down")
                         .font(.title3)
                         .foregroundColor(.orange)
-                        .offset(y: arrowOffset) // Use smoothly animated numeric value only!
+                        .offset(y: arrowOffset)
                     Spacer().frame(height: 4)
                     Text(emojiForGrowth(plant))
                         .font(.system(size: 40))
@@ -175,7 +219,7 @@ struct NextPageView: View {
         // Animate up/down loop
         func animateArrow() {
             withAnimation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                arrowOffset = -10 // Change this value for more or less bounce (e.g., -12 to -10 = 2pt bounce)
+                arrowOffset = -10
             }
         }
 

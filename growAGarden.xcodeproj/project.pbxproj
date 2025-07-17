@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		211BF2FD2E2980AA006D5936 /* CustomizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 211BF2FC2E2980AA006D5936 /* CustomizeView.swift */; };
+		211BF2FF2E2980BA006D5936 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 211BF2FE2E2980BA006D5936 /* StatsView.swift */; };
 		33DB891F2E262E6400DC1C15 /* growAGardenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */; };
 		33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89202E262E6400DC1C15 /* ContentView.swift */; };
 		33DB89232E262E6400DC1C15 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89222E262E6400DC1C15 /* Item.swift */; };
@@ -40,6 +42,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		211BF2FC2E2980AA006D5936 /* CustomizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeView.swift; sourceTree = "<group>"; };
+		211BF2FE2E2980BA006D5936 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		33DB891B2E262E6400DC1C15 /* growAGarden.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = growAGarden.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenApp.swift; sourceTree = "<group>"; };
 		33DB89202E262E6400DC1C15 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -115,6 +119,8 @@
 				33DB89202E262E6400DC1C15 /* ContentView.swift */,
 				33DB89542E2665EB00DC1C15 /* NextPageView.swift */,
 				33DB895C2E27657400DC1C15 /* JournalingView.swift */,
+				211BF2FC2E2980AA006D5936 /* CustomizeView.swift */,
+				211BF2FE2E2980BA006D5936 /* StatsView.swift */,
 				33DB895E2E27658B00DC1C15 /* SettingsView.swift */,
 			);
 			path = growAGarden;
@@ -266,8 +272,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				211BF2FF2E2980BA006D5936 /* StatsView.swift in Sources */,
 				33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */,
 				33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */,
+				211BF2FD2E2980AA006D5936 /* CustomizeView.swift in Sources */,
 				33DB89532E26474E00DC1C15 /* LoginSignUpView.swift in Sources */,
 				33DB895F2E27658B00DC1C15 /* SettingsView.swift in Sources */,
 				33DB895D2E27657400DC1C15 /* JournalingView.swift in Sources */,
