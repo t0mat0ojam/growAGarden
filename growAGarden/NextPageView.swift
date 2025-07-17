@@ -144,42 +144,44 @@ struct NextPageView: View {
     
     struct PlantView: View {
         let plant: Plant
-        
+        @State private var bounce = false
+
         var body: some View {
             ZStack {
-                // Background tile image
                 Image("grass_tile")
                     .resizable(resizingMode: .tile)
                     .aspectRatio(1, contentMode: .fill)
-                    .frame(width: 100, height: 100) // match tile size
+                    .frame(width: 100, height: 100)
                     .clipped()
-                
-                // Plant emoji + habit text
+
                 VStack(spacing: 4) {
+                    // Arrow container with fixed height and clipping to prevent arrow moving outside bounds
+                    ZStack {
+                        Image(systemName: "arrow.down")
+                            .font(.title3)
+                            .foregroundColor(.orange)
+                            .offset(y: bounce ? -6 : 0)
+                            .animation(
+                                Animation.easeInOut(duration: 1.2)
+                                    .repeatForever(autoreverses: true),
+                                value: bounce
+                            )
+                    }
+                    .frame(height: 20)  // Fix arrow container height
+                    .clipped()          // Prevent arrow overflow
+                    .onAppear {
+                        bounce = true
+                    }
+
                     Text(emojiForGrowth(plant))
                         .font(.system(size: 40))
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
-                    
-                    Text(plant.habit)
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: 80)
                 }
-                .padding(8)
+                .padding(.top, 8)
             }
-            .frame(width: 100, height: 100) // make tiles consistent in size
+            .frame(width: 100, height: 100)
         }
-        
-        func colorForState(_ state: PlantState) -> Color {
-            switch state {
-            case .seed: return Color.brown.opacity(0.55)
-            case .sprout: return Color.green.opacity(0.68)
-            case .wilt: return Color.gray.opacity(0.4)
-            }
-        }
-        
+
         func emojiForGrowth(_ plant: Plant) -> String {
             switch (plant.state, plant.growthLevel) {
             case (.seed, _): return "🌱"
@@ -190,6 +192,7 @@ struct NextPageView: View {
             }
         }
     }
+
     
     struct GrassTileView: View {
         var body: some View {
@@ -202,7 +205,6 @@ struct NextPageView: View {
     }
     
     // MARK: - Habit Check-In Modal
-    
     struct HabitCheckInView: View {
         @Binding var plant: Plant
         @Environment(\.dismiss) var dismiss
@@ -211,14 +213,19 @@ struct NextPageView: View {
             VStack(spacing: 24) {
                 Spacer()
                 
+                // 🌱 Show the habit name (e.g., "Meditate")
+                Text(plant.habit)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                
                 Text("Did you complete this habit today?")
                     .font(.title2)
                     .fontWeight(.semibold)
-                
-                Text(plant.habit)
-                    .font(.headline)
                     .multilineTextAlignment(.center)
-                    .padding(.bottom, 10)
+                    .padding(.horizontal)
                 
                 HStack(spacing: 30) {
                     // ✅ Mark as complete
