@@ -12,6 +12,7 @@ struct Plant: Identifiable, Equatable {
     var state: PlantState = .seed
     var growthLevel: Int = 0
     var position: GridPosition
+    var lastCheckInDate: Date? = nil  // ✅ NEW
 }
 
 struct GridPosition: Hashable {
@@ -19,7 +20,6 @@ struct GridPosition: Hashable {
     let col: Int
 }
 
-// Enum to define the tabs for clearer selection management
 enum TabSelection: String, CaseIterable, Identifiable {
     case journaling = "Journaling"
     case home = "Home"
@@ -27,8 +27,7 @@ enum TabSelection: String, CaseIterable, Identifiable {
     case settings = "Settings"
 
     var id: String { self.rawValue }
-    
-    // SF Symbol for each tab
+
     var systemImage: String {
         switch self {
         case .journaling: return "book.closed"
@@ -39,20 +38,16 @@ enum TabSelection: String, CaseIterable, Identifiable {
     }
 }
 
-
-// MARK: - Main View: NextPageView (Your Forest)
+// MARK: - Main View
 
 struct NextPageView: View {
     @State private var plants: [Plant]
     @State private var selectedPlant: Plant?
     @State private var showCheckIn = false
-    
-    // State to control the currently selected tab for TabView
     @State private var selectedTab: TabSelection = .home
-    
-    let gridSize = 4 // 4x4 grid
-    
-    // Initializer now accepts a 'habits' array from ContentView
+
+    let gridSize = 4
+
     init(habits: [String]) {
         _plants = State(initialValue: habits.enumerated().map { index, habit in
             let row = index / 4
@@ -60,64 +55,52 @@ struct NextPageView: View {
             return Plant(habit: habit, position: GridPosition(row: row, col: col))
         })
     }
-    
+
     var body: some View {
         NavigationStack {
             TabView(selection: $selectedTab) {
-                // Journaling Tab Content
                 JournalingView()
                     .tag(TabSelection.journaling)
                     .tabItem {
                         VStack {
-                            Image(systemName: TabSelection.journaling.systemImage)
-                                .font(.title2)
-                            Text(TabSelection.journaling.rawValue)
-                                .font(.caption)
+                            Image(systemName: TabSelection.journaling.systemImage).font(.title2)
+                            Text(TabSelection.journaling.rawValue).font(.caption)
                         }
                         .scaleEffect(selectedTab == .journaling ? 1.2 : 1.0)
                         .fontWeight(selectedTab == .journaling ? .bold : .regular)
                         .animation(.spring(), value: selectedTab)
                     }
-                
-                // Home Tab Content (Original NextPageView content, now in a subview)
-                ForestGridView(plants: $plants, selectedPlant: $selectedPlant, showCheckIn: $showCheckIn)
+
+                ForestGridView(plants: $plants, selectedPlant: $selectedPlant)
                     .tag(TabSelection.home)
                     .tabItem {
                         VStack {
-                            Image(systemName: TabSelection.home.systemImage)
-                                .font(.title2)
-                            Text(TabSelection.home.rawValue)
-                                .font(.caption)
+                            Image(systemName: TabSelection.home.systemImage).font(.title2)
+                            Text(TabSelection.home.rawValue).font(.caption)
                         }
                         .scaleEffect(selectedTab == .home ? 1.2 : 1.0)
                         .fontWeight(selectedTab == .home ? .bold : .regular)
                         .animation(.spring(), value: selectedTab)
                     }
-                
-                // Stats Tab Content
+
                 StatsView()
                     .tag(TabSelection.stats)
                     .tabItem {
                         VStack {
-                            Image(systemName: TabSelection.stats.systemImage)
-                                .font(.title2)
-                            Text(TabSelection.stats.rawValue)
-                                .font(.caption)
+                            Image(systemName: TabSelection.stats.systemImage).font(.title2)
+                            Text(TabSelection.stats.rawValue).font(.caption)
                         }
                         .scaleEffect(selectedTab == .stats ? 1.2 : 1.0)
                         .fontWeight(selectedTab == .stats ? .bold : .regular)
                         .animation(.spring(), value: selectedTab)
                     }
-                
-                // Settings Tab Content
+
                 SettingsView()
                     .tag(TabSelection.settings)
                     .tabItem {
                         VStack {
-                            Image(systemName: TabSelection.settings.systemImage)
-                                .font(.title2)
-                            Text(TabSelection.settings.rawValue)
-                                .font(.caption)
+                            Image(systemName: TabSelection.settings.systemImage).font(.title2)
+                            Text(TabSelection.settings.rawValue).font(.caption)
                         }
                         .scaleEffect(selectedTab == .settings ? 1.2 : 1.0)
                         .fontWeight(selectedTab == .settings ? .bold : .regular)
@@ -129,66 +112,65 @@ struct NextPageView: View {
                     HabitCheckInView(plant: $plants[idx])
                 }
             }
-            // Hide the navigation bar's back button
             .navigationBarBackButtonHidden(true)
         }
     }
-    
-    // New struct to encapsulate the original forest grid content with layout adjustments
+
+    // MARK: - Grid View
     struct ForestGridView: View {
         @Binding var plants: [Plant]
         @Binding var selectedPlant: Plant?
-        @Binding var showCheckIn: Bool
-        
-        let gridSize = 4 // 4x4 grid
+
+        let gridSize = 4
         let columns: [GridItem] = Array(repeating: .init(.fixed(100)), count: 4)
-        
+
         var body: some View {
             ZStack {
                 Image("grass_tile")
                     .resizable(resizingMode: .tile)
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 0) {
                     Text("Your Forest")
                         .font(.system(size: 34, weight: .heavy, design: .rounded))
                         .foregroundColor(.black)
                         .padding(.top, 16)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
+
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(0..<(gridSize * gridSize), id: \.self) { index in
                                 let row = index / gridSize
                                 let col = index % gridSize
                                 let pos = GridPosition(row: row, col: col)
-                                
+
                                 if let plant = plants.first(where: { $0.position == pos }) {
                                     PlantView(plant: plant)
                                         .onTapGesture {
-                                            selectedPlant = plant
-                                            showCheckIn = true
+                                            if !hasCheckedInToday(plant: plant) {
+                                                selectedPlant = plant
+                                            }
                                         }
                                 } else {
                                     GrassTileView()
                                 }
                             }
                         }
-                        .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.bottom, 40)
                         .padding(.horizontal, 16)
                     }
-                    Spacer()
                 }
             }
         }
+
+        func hasCheckedInToday(plant: Plant) -> Bool {
+            guard let last = plant.lastCheckInDate else { return false }
+            return Calendar.current.isDateInToday(last)
+        }
     }
-    
+
     // MARK: - Plant View
     struct PlantView: View {
         let plant: Plant
-
-        // Controls arrow Y offset (animated)
         @State private var arrowOffset: CGFloat = -12
 
         var body: some View {
@@ -209,6 +191,17 @@ struct NextPageView: View {
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
                 }
                 .frame(width: 100, height: 100)
+
+                if Calendar.current.isDateInToday(plant.lastCheckInDate ?? .distantPast) {
+                    Color.black.opacity(0.3)
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(12)
+                        .overlay(
+                            Text("✅")
+                                .font(.caption)
+                                .foregroundColor(.white)
+                        )
+                }
             }
             .frame(width: 100, height: 100)
             .onAppear {
@@ -216,7 +209,6 @@ struct NextPageView: View {
             }
         }
 
-        // Animate up/down loop
         func animateArrow() {
             withAnimation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
                 arrowOffset = -10
@@ -234,7 +226,6 @@ struct NextPageView: View {
         }
     }
 
-
     struct GrassTileView: View {
         var body: some View {
             Image("grass_tile")
@@ -244,35 +235,34 @@ struct NextPageView: View {
                 .clipped()
         }
     }
-    
-    // MARK: - Habit Check-In Modal
+
+    // MARK: - Check-In View
     struct HabitCheckInView: View {
         @Binding var plant: Plant
         @Environment(\.dismiss) var dismiss
-        
+
         var body: some View {
             VStack(spacing: 24) {
                 Spacer()
-                
-                // 🌱 Show the habit name (e.g., "Meditate")
+
                 Text(plant.habit)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
-                
+
                 Text("Did you complete this habit today?")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
-                
+
                 HStack(spacing: 30) {
-                    // ✅ Mark as complete
                     Button {
                         plant.state = .sprout
                         plant.growthLevel += 1
+                        plant.lastCheckInDate = Date()  // ✅ NEW
                         dismiss()
                     } label: {
                         Text("Yes ✅")
@@ -283,10 +273,10 @@ struct NextPageView: View {
                             .foregroundColor(.white)
                             .cornerRadius(14)
                     }
-                    
-                    // ❌ Mark as incomplete
+
                     Button {
                         plant.state = .wilt
+                        plant.lastCheckInDate = Date()  // ✅ NEW
                         dismiss()
                     } label: {
                         Text("No ❌")
@@ -298,7 +288,7 @@ struct NextPageView: View {
                             .cornerRadius(14)
                     }
                 }
-                
+
                 Spacer()
             }
             .padding()
