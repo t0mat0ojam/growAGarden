@@ -1,132 +1,176 @@
 import SwiftUI
 
-// MARK: - JournalEntry Model
-// This struct represents a single journal entry, conforming to Codable
-// so it can be easily saved to and loaded from UserDefaults.
 struct JournalEntry: Identifiable, Codable {
-    let id = UUID() // Unique identifier for each entry
-    let date: Date // Timestamp when the entry was created
-    var text: String // The actual journal text
+    let id = UUID()
+    let date: Date
+    var text: String
+    var emojis: [String]
 }
 
-// MARK: - JournalingView
-// The main view for journaling, allowing users to write and view past entries.
 struct JournalingView: View {
-    // State variable to hold the current text being written in the TextEditor.
-    // It's initialized as an empty string.
     @State private var currentJournalText: String = ""
-
-    // State variable to hold all past journal entries.
-    // It's initialized by loading existing entries from UserDefaults.
     @State private var journalEntries: [JournalEntry] = []
+    @State private var selectedEmojis: [String] = []
 
-    // UserDefault key for storing journal entries.
     private let journalEntriesKey = "journalEntries"
+    private let availableEmojis = ["😊", "😢", "🤬", "😤", "💩", "🔥", "💖", "🎯", "📚", "😴"]
 
     var body: some View {
-        NavigationView { // Embed in NavigationView for title and potential future navigation
-            VStack {
-                Text("Journaling")
-                    .font(.largeTitle)
-                    .padding()
+        NavigationView {
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color("ParchmentTop"), Color("ParchmentBottom")]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-                Text("Here you will be able to write your thoughts and keep a habit journal.")
-                    .font(.body)
-                    .padding(.horizontal) // Add horizontal padding for better readability
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Dear Journal,")
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
 
-                // MARK: - New Journal Entry Section
-                // TextEditor for writing the current day's journal entry.
-                TextEditor(text: $currentJournalText)
-                    .frame(height: 150) // Give it a fixed height
-                    .padding()
-                    .background(Color.gray.opacity(0.1)) // Light gray background for the text box
-                    .cornerRadius(10) // Rounded corners
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray, lineWidth: 1) // Thin gray border
-                    )
-                    .padding(.horizontal) // Padding around the text editor
-
-                // Button to save the current journal entry.
-                Button("Save Journal Entry") {
-                    saveJournalEntry()
-                }
-                .padding()
-                .background(Color.blue) // Blue background for the button
-                .foregroundColor(.white) // White text color
-                .cornerRadius(10) // Rounded corners for the button
-                .padding(.bottom) // Padding below the button
-
-                // MARK: - Past Journal Entries Section
-                Text("Past Entries")
-                    .font(.title2)
-                    .padding(.top)
-
-                // List to display all past journal entries.
-                List {
-                    // Check if there are any entries to display.
-                    if journalEntries.isEmpty {
-                        Text("No past entries yet. Start journaling!")
-                            .foregroundColor(.gray)
-                    } else {
-                        // Iterate through the journalEntries array to display each entry.
-                        ForEach(journalEntries.sorted(by: { $0.date > $1.date })) { entry in
-                            VStack(alignment: .leading) {
-                                // Display the date of the entry, formatted nicely.
-                                Text(entry.date, style: .date)
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-                                Text(entry.date, style: .time)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-
-                                // Display the journal text.
-                                Text(entry.text)
-                                    .font(.body)
-                                    .padding(.top, 2)
-                                    .lineLimit(nil) // Allow text to wrap
-                            }
-                            .padding(.vertical, 5) // Vertical padding for each list item
+                            Text("Reflect, write, and grow a little each day.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
-                        // Add onDelete functionality to delete past entries.
-                        .onDelete(perform: deleteJournalEntry)
+                        .padding(.horizontal)
+
+                        // Emoji Picker
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("How are you feeling?")
+                                .font(.headline)
+
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 6), spacing: 12) {
+                                ForEach(availableEmojis, id: \.self) { emoji in
+                                    Button(action: {
+                                        toggleEmoji(emoji)
+                                    }) {
+                                        Text(emoji)
+                                            .font(.title2)
+                                            .padding(8)
+                                            .background(selectedEmojis.contains(emoji) ? Color.blue.opacity(0.3) : Color.white.opacity(0.7))
+                                            .cornerRadius(8)
+                                    }
+                                    .disabled(!selectedEmojis.contains(emoji) && selectedEmojis.count >= 3)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+
+                        // Journal Entry
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Today's Entry")
+                                .font(.title2)
+                                .fontWeight(.medium)
+
+                            TextEditor(text: $currentJournalText)
+                                .frame(height: 150)
+                                .padding()
+                                .background(Color.white.opacity(0.85))
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                )
+
+                            Button(action: saveJournalEntry) {
+                                HStack {
+                                    Image(systemName: "square.and.arrow.down")
+                                    Text("Save Entry")
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue.opacity(0.8))
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                            }
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(16)
+                        .padding(.horizontal)
+
+                        // Past Entries
+                        if !journalEntries.isEmpty {
+                            Text("Past Entries")
+                                .font(.title2)
+                                .fontWeight(.medium)
+                                .padding(.horizontal)
+
+                            ForEach(journalEntries.sorted(by: { $0.date > $1.date })) { entry in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack {
+                                        Text(entry.date, style: .date)
+                                            .font(.headline)
+
+                                        Spacer()
+
+                                        Text(entry.date, style: .time)
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
+
+                                    if !entry.emojis.isEmpty {
+                                        Text(entry.emojis.joined(separator: " "))
+                                            .font(.title2)
+                                    }
+
+                                    Text(entry.text)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                }
+                                .padding()
+                                .background(Color.white.opacity(0.85))
+                                .cornerRadius(12)
+                                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+                                .padding(.horizontal)
+                                .padding(.bottom, 5)
+                            }
+                        } else {
+                            Text("No past entries yet. Start journaling!")
+                                .foregroundColor(.secondary)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                        }
                     }
+                    .padding(.top)
                 }
-                .listStyle(.plain) // Use plain list style for a cleaner look
-                .padding(.horizontal) // Padding around the list
             }
-            .navigationTitle("Habit Grove") // Title for the navigation bar
-            .navigationBarTitleDisplayMode(.inline) // Display title inline
-            .onAppear(perform: loadJournalEntries) // Load entries when the view appears
+            .navigationTitle("Habit Grove")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear(perform: loadJournalEntries)
         }
     }
 
-    // MARK: - Helper Functions
+    // MARK: - Emoji Toggle
+    private func toggleEmoji(_ emoji: String) {
+        if let index = selectedEmojis.firstIndex(of: emoji) {
+            selectedEmojis.remove(at: index)
+        } else if selectedEmojis.count < 3 {
+            selectedEmojis.append(emoji)
+        }
+    }
 
-    // Function to save the current journal entry.
+    // MARK: - Save / Load / Delete
     private func saveJournalEntry() {
-        // Ensure the text box is not empty or just whitespace.
         guard !currentJournalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            // Optionally, show an alert to the user that the entry is empty.
-            print("Journal entry is empty. Not saving.")
+            print("Journal entry is empty.")
             return
         }
 
-        // Create a new JournalEntry object with the current text and date.
-        let newEntry = JournalEntry(date: Date(), text: currentJournalText)
-        // Add the new entry to the beginning of the array so the latest is at the top.
+        let newEntry = JournalEntry(date: Date(), text: currentJournalText, emojis: selectedEmojis)
         journalEntries.insert(newEntry, at: 0)
-        // Clear the text editor after saving.
         currentJournalText = ""
-        // Save the updated list of entries to UserDefaults.
+        selectedEmojis = []
         saveJournalEntriesToUserDefaults()
     }
 
-    // Function to load journal entries from UserDefaults.
     private func loadJournalEntries() {
         if let savedEntriesData = UserDefaults.standard.data(forKey: journalEntriesKey) {
             do {
-                // Decode the saved data into an array of JournalEntry objects.
                 let decodedEntries = try JSONDecoder().decode([JournalEntry].self, from: savedEntriesData)
                 journalEntries = decodedEntries
             } catch {
@@ -135,32 +179,25 @@ struct JournalingView: View {
         }
     }
 
-    // Function to save the current list of journal entries to UserDefaults.
     private func saveJournalEntriesToUserDefaults() {
         do {
-            // Encode the journalEntries array into Data.
             let encodedEntries = try JSONEncoder().encode(journalEntries)
-            // Save the Data to UserDefaults.
             UserDefaults.standard.set(encodedEntries, forKey: journalEntriesKey)
         } catch {
             print("Error encoding journal entries: \(error.localizedDescription)")
         }
     }
 
-    // Function to delete a journal entry from the list.
     private func deleteJournalEntry(at offsets: IndexSet) {
-        // Remove the entry from the array.
         journalEntries.remove(atOffsets: offsets)
-        // Save the updated list to UserDefaults after deletion.
         saveJournalEntriesToUserDefaults()
     }
 }
 
-// MARK: - Preview Provider
-// Provides a preview of the JournalingView in Xcode's canvas.
 struct JournalingView_Previews: PreviewProvider {
     static var previews: some View {
         JournalingView()
+            .environment(\.colorScheme, .light)
     }
 }
 
