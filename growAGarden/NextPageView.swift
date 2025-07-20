@@ -124,8 +124,8 @@ struct NextPageView: View {
                         .animation(.spring(), value: selectedTab)
                     }
             }
-            .sheet(isPresented: $showCheckIn) {
-                if let idx = plants.firstIndex(where: { $0.id == selectedPlant?.id }) {
+            .sheet(item: $selectedPlant) { plant in
+                if let idx = plants.firstIndex(where: { $0.id == plant.id }) {
                     HabitCheckInView(plant: $plants[idx])
                 }
             }
