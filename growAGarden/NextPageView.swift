@@ -204,9 +204,19 @@ struct NextPageView: View {
                         .foregroundColor(.orange)
                         .offset(y: arrowOffset)
                     Spacer().frame(height: 4)
-                    Text(emojiForGrowth(plant))
-                        .font(.system(size: 40))
-                        .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
+
+                    if plant.state == .wilt {
+                        // Wilt state: show emoji
+                        Text("🥀")
+                            .font(.system(size: 40))
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
+                    } else {
+                        // Growing states: show the image asset
+                        Image(imageNameForGrowth(plant))
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
+                    }
                 }
                 .frame(width: 100, height: 100)
 
@@ -233,16 +243,21 @@ struct NextPageView: View {
             }
         }
 
-        func emojiForGrowth(_ plant: Plant) -> String {
+        // This is now a simple string-returning function, not a ViewBuilder
+        func imageNameForGrowth(_ plant: Plant) -> String {
             switch (plant.state, plant.growthLevel) {
-            case (.seed, _): return "🌱"
-            case (.sprout, 0): return "🌿"
-            case (.sprout, 1): return "🌳"
-            case (.sprout, _): return "🌲"
-            case (.wilt, _): return "🥀"
+            case (.seed, _):
+                return "tree_1" // sprout
+            case (.sprout, 0):
+                return "tree_2" // small tree
+            case (.sprout, 1...):
+                return "tree_3" // big tree or further stages
+            default:
+                return "tree_1"
             }
         }
     }
+
 
     struct GrassTileView: View {
         var body: some View {
