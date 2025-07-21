@@ -12,7 +12,7 @@ struct Plant: Identifiable, Equatable {
     var state: PlantState = .seed
     var growthLevel: Int = 0
     var position: GridPosition
-    var lastCheckInDate: Date? = nil  // ✅ NEW
+    var lastCheckInDate: Date? = nil
 }
 
 struct GridPosition: Hashable {
@@ -116,6 +116,31 @@ struct NextPageView: View {
         }
     }
 
+    // MARK: - Forest Background View
+    struct BackgroundGridView: View {
+        let tileSize: CGFloat = 100
+
+        var body: some View {
+            GeometryReader { geometry in
+                let rows = Int(ceil(geometry.size.height / tileSize))
+                let cols = Int(ceil(geometry.size.width / tileSize))
+                ForEach(0..<rows, id: \.self) { row in
+                    ForEach(0..<cols, id: \.self) { col in
+                        let imageName = (row + col) % 2 == 0 ? "grass_tile1" : "grass_tile2"
+                        Image(imageName)
+                            .resizable()
+                            .frame(width: tileSize, height: tileSize)
+                            .position(
+                                x: CGFloat(col) * tileSize + tileSize / 2,
+                                y: CGFloat(row) * tileSize + tileSize / 2
+                            )
+                    }
+                }
+            }
+            .ignoresSafeArea()
+        }
+    }
+
     // MARK: - Grid View
     struct ForestGridView: View {
         @Binding var plants: [Plant]
@@ -126,9 +151,7 @@ struct NextPageView: View {
 
         var body: some View {
             ZStack {
-                Image("grass_tile")
-                    .resizable(resizingMode: .tile)
-                    .ignoresSafeArea()
+                BackgroundGridView()
 
                 VStack(spacing: 0) {
                     Text("Your Forest")
@@ -175,11 +198,6 @@ struct NextPageView: View {
 
         var body: some View {
             ZStack {
-                Image("grass_tile")
-                    .resizable(resizingMode: .tile)
-                    .aspectRatio(1, contentMode: .fill)
-                    .frame(width: 100, height: 100)
-
                 VStack(spacing: 0) {
                     Image(systemName: "arrow.down")
                         .font(.title3)
@@ -228,11 +246,8 @@ struct NextPageView: View {
 
     struct GrassTileView: View {
         var body: some View {
-            Image("grass_tile")
-                .resizable(resizingMode: .tile)
-                .aspectRatio(1, contentMode: .fill)
+            Color.clear
                 .frame(width: 100, height: 100)
-                .clipped()
         }
     }
 
@@ -262,7 +277,7 @@ struct NextPageView: View {
                     Button {
                         plant.state = .sprout
                         plant.growthLevel += 1
-                        plant.lastCheckInDate = Date()  // ✅ NEW
+                        plant.lastCheckInDate = Date()
                         dismiss()
                     } label: {
                         Text("Yes ✅")
@@ -276,7 +291,7 @@ struct NextPageView: View {
 
                     Button {
                         plant.state = .wilt
-                        plant.lastCheckInDate = Date()  // ✅ NEW
+                        plant.lastCheckInDate = Date()
                         dismiss()
                     } label: {
                         Text("No ❌")
@@ -295,3 +310,4 @@ struct NextPageView: View {
         }
     }
 }
+
