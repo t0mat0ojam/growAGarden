@@ -10,6 +10,14 @@
 		211BF2FD2E2980AA006D5936 /* CustomizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 211BF2FC2E2980AA006D5936 /* CustomizeView.swift */; };
 		217883372E2CB76E00C52416 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217883362E2CB76E00C52416 /* StatsView.swift */; };
 		21B9A75F2E5FF659008B31CD /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B9A75E2E5FF659008B31CD /* LoadingView.swift */; };
+		3308BE722E66E4D5003E5B3E /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 3308BE712E66E4D5003E5B3E /* Auth */; };
+		3308BE742E66E4D5003E5B3E /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 3308BE732E66E4D5003E5B3E /* Functions */; };
+		3308BE762E66E4D5003E5B3E /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 3308BE752E66E4D5003E5B3E /* PostgREST */; };
+		3308BE782E66E4D5003E5B3E /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 3308BE772E66E4D5003E5B3E /* Realtime */; };
+		3308BE7A2E66E4D5003E5B3E /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 3308BE792E66E4D5003E5B3E /* Storage */; };
+		3308BE7D2E66E553003E5B3E /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 3308BE7C2E66E553003E5B3E /* Supabase */; };
+		3308BE7F2E66EBAB003E5B3E /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3308BE7E2E66EBAB003E5B3E /* AuthManager.swift */; };
+		3308BE812E670F30003E5B3E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3308BE802E670F2F003E5B3E /* RootView.swift */; };
 		33DB891F2E262E6400DC1C15 /* growAGardenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */; };
 		33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89202E262E6400DC1C15 /* ContentView.swift */; };
 		33DB89232E262E6400DC1C15 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89222E262E6400DC1C15 /* Item.swift */; };
@@ -17,7 +25,6 @@
 		33DB89322E262E6800DC1C15 /* growAGardenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89312E262E6800DC1C15 /* growAGardenTests.swift */; };
 		33DB893C2E262E6800DC1C15 /* growAGardenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB893B2E262E6800DC1C15 /* growAGardenUITests.swift */; };
 		33DB893E2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */; };
-		33DB894F2E26471200DC1C15 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB894E2E26471200DC1C15 /* AuthManager.swift */; };
 		33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89502E26473300DC1C15 /* MainAppView.swift */; };
 		33DB89532E26474E00DC1C15 /* LoginSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */; };
 		33DB89552E2665EB00DC1C15 /* NextPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DB89542E2665EB00DC1C15 /* NextPageView.swift */; };
@@ -46,6 +53,9 @@
 		211BF2FC2E2980AA006D5936 /* CustomizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeView.swift; sourceTree = "<group>"; };
 		217883362E2CB76E00C52416 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		21B9A75E2E5FF659008B31CD /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		3308BE6E2E66DD32003E5B3E /* growAGarden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = growAGarden.entitlements; sourceTree = "<group>"; };
+		3308BE7E2E66EBAB003E5B3E /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		3308BE802E670F2F003E5B3E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		33DB891B2E262E6400DC1C15 /* growAGarden.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = growAGarden.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenApp.swift; sourceTree = "<group>"; };
 		33DB89202E262E6400DC1C15 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -56,7 +66,6 @@
 		33DB89372E262E6800DC1C15 /* growAGardenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = growAGardenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB893B2E262E6800DC1C15 /* growAGardenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenUITests.swift; sourceTree = "<group>"; };
 		33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		33DB894E2E26471200DC1C15 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		33DB89502E26473300DC1C15 /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
 		33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSignUpView.swift; sourceTree = "<group>"; };
 		33DB89542E2665EB00DC1C15 /* NextPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPageView.swift; sourceTree = "<group>"; };
@@ -69,6 +78,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3308BE762E66E4D5003E5B3E /* PostgREST in Frameworks */,
+				3308BE742E66E4D5003E5B3E /* Functions in Frameworks */,
+				3308BE7D2E66E553003E5B3E /* Supabase in Frameworks */,
+				3308BE722E66E4D5003E5B3E /* Auth in Frameworks */,
+				3308BE7A2E66E4D5003E5B3E /* Storage in Frameworks */,
+				3308BE782E66E4D5003E5B3E /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +104,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3308BE7B2E66E553003E5B3E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		33DB89122E262E6400DC1C15 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +118,7 @@
 				33DB89302E262E6800DC1C15 /* growAGardenTests */,
 				33DB893A2E262E6800DC1C15 /* growAGardenUITests */,
 				33DB891C2E262E6400DC1C15 /* Products */,
+				3308BE7B2E66E553003E5B3E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -112,10 +135,11 @@
 		33DB891D2E262E6400DC1C15 /* growAGarden */ = {
 			isa = PBXGroup;
 			children = (
+				3308BE6E2E66DD32003E5B3E /* growAGarden.entitlements */,
 				33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */,
+				3308BE802E670F2F003E5B3E /* RootView.swift */,
 				33DB89222E262E6400DC1C15 /* Item.swift */,
 				33DB89242E262E6800DC1C15 /* Assets.xcassets */,
-				33DB894E2E26471200DC1C15 /* AuthManager.swift */,
 				33DB89502E26473300DC1C15 /* MainAppView.swift */,
 				33DB89522E26474D00DC1C15 /* LoginSignUpView.swift */,
 				33DB89202E262E6400DC1C15 /* ContentView.swift */,
@@ -125,6 +149,7 @@
 				211BF2FC2E2980AA006D5936 /* CustomizeView.swift */,
 				21B9A75E2E5FF659008B31CD /* LoadingView.swift */,
 				33DB895E2E27658B00DC1C15 /* SettingsView.swift */,
+				3308BE7E2E66EBAB003E5B3E /* AuthManager.swift */,
 			);
 			path = growAGarden;
 			sourceTree = "<group>";
@@ -162,6 +187,14 @@
 			dependencies = (
 			);
 			name = growAGarden;
+			packageProductDependencies = (
+				3308BE712E66E4D5003E5B3E /* Auth */,
+				3308BE732E66E4D5003E5B3E /* Functions */,
+				3308BE752E66E4D5003E5B3E /* PostgREST */,
+				3308BE772E66E4D5003E5B3E /* Realtime */,
+				3308BE792E66E4D5003E5B3E /* Storage */,
+				3308BE7C2E66E553003E5B3E /* Supabase */,
+			);
 			productName = growAGarden;
 			productReference = 33DB891B2E262E6400DC1C15 /* growAGarden.app */;
 			productType = "com.apple.product-type.application";
@@ -234,6 +267,9 @@
 				Base,
 			);
 			mainGroup = 33DB89122E262E6400DC1C15;
+			packageReferences = (
+				3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = 33DB891C2E262E6400DC1C15 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -276,6 +312,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				217883372E2CB76E00C52416 /* StatsView.swift in Sources */,
+				3308BE7F2E66EBAB003E5B3E /* AuthManager.swift in Sources */,
 				33DB89212E262E6400DC1C15 /* ContentView.swift in Sources */,
 				33DB89512E26473300DC1C15 /* MainAppView.swift in Sources */,
 				211BF2FD2E2980AA006D5936 /* CustomizeView.swift in Sources */,
@@ -283,8 +320,8 @@
 				21B9A75F2E5FF659008B31CD /* LoadingView.swift in Sources */,
 				33DB895F2E27658B00DC1C15 /* SettingsView.swift in Sources */,
 				33DB895D2E27657400DC1C15 /* JournalingView.swift in Sources */,
+				3308BE812E670F30003E5B3E /* RootView.swift in Sources */,
 				33DB89552E2665EB00DC1C15 /* NextPageView.swift in Sources */,
-				33DB894F2E26471200DC1C15 /* AuthManager.swift in Sources */,
 				33DB89232E262E6400DC1C15 /* Item.swift in Sources */,
 				33DB891F2E262E6400DC1C15 /* growAGardenApp.swift in Sources */,
 			);
@@ -447,8 +484,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = growAGarden/growAGarden.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JPWC4AB96B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -474,8 +513,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = growAGarden/growAGarden.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JPWC4AB96B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -608,6 +649,50 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3308BE712E66E4D5003E5B3E /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		3308BE732E66E4D5003E5B3E /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		3308BE752E66E4D5003E5B3E /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		3308BE772E66E4D5003E5B3E /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		3308BE792E66E4D5003E5B3E /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		3308BE7C2E66E553003E5B3E /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3308BE702E66E4D5003E5B3E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 33DB89132E262E6400DC1C15 /* Project object */;
 }
