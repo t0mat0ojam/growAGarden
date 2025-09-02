@@ -24,6 +24,7 @@ enum TabSelection: String, CaseIterable, Identifiable {
     case journaling = "Journaling"
     case home = "Home"
     case stats = "Stats"
+    case volunteer = "Volunteer"
     case settings = "Settings"
 
     var id: String { self.rawValue }
@@ -33,6 +34,7 @@ enum TabSelection: String, CaseIterable, Identifiable {
         case .journaling: return "book.closed"
         case .home: return "leaf.circle.fill"
         case .stats: return "chart.bar.fill"
+        case .volunteer: return "hand.raised.fill"
         case .settings: return "gearshape"
         }
     }
@@ -110,6 +112,12 @@ struct NextPageView: View {
                     .tag(TabSelection.stats)
                     .tabItem {
                         Label(TabSelection.stats.rawValue, systemImage: TabSelection.stats.systemImage)
+                    }
+
+                VolunteerView()
+                    .tag(TabSelection.volunteer)
+                    .tabItem {
+                        Label(TabSelection.volunteer.rawValue, systemImage: TabSelection.volunteer.systemImage)
                     }
 
                 SettingsView()
@@ -704,3 +712,4 @@ struct ConfettiView: View {
         .onAppear { animate = true }
     }
 }
+
