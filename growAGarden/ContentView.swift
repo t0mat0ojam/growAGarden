@@ -1,26 +1,42 @@
 import SwiftUI
 
-// MARK: - DBHabit Model
+// MARK: - DBHabit Model (unchanged)
 struct DBHabit: Identifiable, Codable, Equatable {
     let id: String
     let habit_name: String
 }
 
+// MARK: - Environmental Presets
+private struct EnvironmentalOption: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let requiresTemperature: Bool
+}
+
+private let ENV_OPTIONS: [EnvironmentalOption] = [
+    .init(id: "bike",    title: "Bike/public transportation rather than car", requiresTemperature: false),
+    .init(id: "ac",      title: "Airconditioner only down to x degrees",      requiresTemperature: true),
+    .init(id: "bottle",  title: "Use reusable waterbottle",                    requiresTemperature: false),
+    .init(id: "lunch",   title: "Bring lunch rather than buy",                 requiresTemperature: false),
+    .init(id: "hangdry", title: "Hang-dry laundry instead of using a dryer",  requiresTemperature: false)
+]
+
 // MARK: - ContentView
 struct ContentView: View {
     @EnvironmentObject var authManager: AuthManager
-    @State private var habits: [DBHabit] = []
-    @State private var newHabit: String = ""
+
+    // Personal (user-typed) habits loaded/saved via Supabase
+    @State private var personalHabits: [DBHabit] = []
+    @State private var newPersonalHabit: String = ""
+    @State private var isSavingPersonal = false
+
+    // Environmental selections (local UI state)
+    @State private var selectedEnvIDs: Set<String> = []
+    @State private var acTemp: Double = 26.5 // required when AC is selected
+
+    // Navigation
     @State private var showNextPage: Bool = false
-    @State private var isLoading: Bool = false
-    
-    // Default habits to show immediately
-    private let defaultHabits: [DBHabit] = [
-        DBHabit(id: "1", habit_name: "Sleep for 8 hours"),
-        DBHabit(id: "2", habit_name: "Read for 30 minutes"),
-        DBHabit(id: "3", habit_name: "Workout for 30 minutes")
-    ]
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -32,166 +48,230 @@ struct ContentView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-                
-                VStack {
-                    Spacer()
-                    
-                    // Title
-                    Text("Habits")
-                        .font(.system(size: 38, weight: .semibold, design: .rounded))
-                        .foregroundColor(.primary)
-                        .padding(.bottom, 10)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                    
-                    // Habits list
-                    ForEach(habits.indices, id: \.self) { index in
-                        let habit = habits[index]
-                        HStack {
-                            Text(habit.habit_name)
-                                .font(.system(size: 20, weight: .medium, design: .rounded))
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 8)
-                                .padding(.leading, 18)
-                            
-                            Spacer()
-                            
-                            Button {
-                                Task {
-                                    let habitToDelete = habits[index]
-                                    await authManager.deleteHabit(habitToDelete)
-                                    await loadHabits()
+
+                ScrollView {
+                    VStack(spacing: 22) {
+                        // Title
+                        Text("Choose Your Habits")
+                            .font(.system(size: 34, weight: .semibold, design: .rounded))
+                            .padding(.top, 14)
+
+                        // -------------------------------
+                        // Environmental Habits (presets)
+                        // -------------------------------
+                        sectionCard(title: "Environmental Habits") {
+                            VStack(spacing: 10) {
+                                ForEach(ENV_OPTIONS) { opt in
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Toggle(isOn: Binding(
+                                            get: { selectedEnvIDs.contains(opt.id) },
+                                            set: { on in
+                                                if on { selectedEnvIDs.insert(opt.id) }
+                                                else  { selectedEnvIDs.remove(opt.id) }
+                                            }
+                                        )) {
+                                            Text(opt.title)
+                                                .font(.system(size: 18, weight: .medium, design: .rounded))
+                                        }
+
+                                        if opt.id == "ac", selectedEnvIDs.contains("ac") {
+                                            HStack(spacing: 12) {
+                                                Image(systemName: "thermometer.sun")
+                                                Text("Set temperature")
+                                                Spacer()
+                                                Stepper(value: $acTemp, in: 18...30, step: 0.5) {
+                                                    Text(String(format: "%.1f ℃", acTemp))
+                                                        .font(.system(size: 16, weight: .semibold))
+                                                }
+                                            }
+                                            .padding(10)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(Color(.systemGray6).opacity(0.95))
+                                            )
+                                        }
+                                    }
+                                    .padding(12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .fill(Color.white.opacity(0.9))
+                                            .shadow(color: Color(.systemTeal).opacity(0.10), radius: 6, x: 0, y: 3)
+                                    )
                                 }
-                            } label: {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.pink)
-                                    .padding(.trailing, 16)
                             }
                         }
-                        .background(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .fill(Color.white.opacity(0.86))
-                                .shadow(color: Color(.systemTeal).opacity(0.12), radius: 8, x: 0, y: 4)
-                        )
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 2)
-                    }
-                    
-                    // Add habit
-                    HStack {
-                        TextField("Add new habit...", text: $newHabit)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(.systemGray6).opacity(0.97))
-                            )
-                            .font(.system(size: 18, design: .rounded))
-                        
+
+                        // -------------------------------
+                        // Personal Habits (free text)
+                        // -------------------------------
+                        sectionCard(title: "Personal Habits") {
+                            VStack(spacing: 10) {
+                                HStack {
+                                    TextField("Type a habit…", text: $newPersonalHabit)
+                                        .textInputAutocapitalization(.sentences)
+                                        .disableAutocorrection(false)
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal, 14)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color(.systemGray6).opacity(0.97))
+                                        )
+
+                                    Button {
+                                        Task { await addPersonalHabit() }
+                                    } label: {
+                                        if isSavingPersonal {
+                                            ProgressView().frame(width: 28, height: 28)
+                                        } else {
+                                            Image(systemName: "plus.circle.fill")
+                                                .font(.system(size: 28))
+                                        }
+                                    }
+                                    .disabled(newPersonalHabit.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSavingPersonal)
+                                    .foregroundColor(Color(.systemMint))
+                                }
+
+                                if personalHabits.isEmpty {
+                                    Text("No personal habits yet. Add one above 👆")
+                                        .foregroundColor(.secondary)
+                                        .font(.footnote)
+                                        .padding(.top, 4)
+                                } else {
+                                    ForEach(personalHabits.indices, id: \.self) { i in
+                                        let h = personalHabits[i]
+                                        HStack {
+                                            Text(h.habit_name)
+                                                .font(.system(size: 18, weight: .medium, design: .rounded))
+                                            Spacer()
+                                            Button {
+                                                Task {
+                                                    await authManager.deleteHabit(h)
+                                                    await loadPersonalHabits()
+                                                }
+                                            } label: {
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.pink)
+                                            }
+                                        }
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 14)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.9))
+                                        )
+                                        .shadow(color: Color(.systemTeal).opacity(0.10), radius: 6, x: 0, y: 3)
+                                    }
+                                }
+                            }
+                        }
+
+                        // -------------------------------
+                        // Go button
+                        // -------------------------------
                         Button {
-                            let trimmed = newHabit.trimmingCharacters(in: .whitespacesAndNewlines)
-                            guard !trimmed.isEmpty else { return }
-                            Task {
-                                await addHabit(name: trimmed)
-                            }
+                            showNextPage = true
                         } label: {
-                            if isLoading {
-                                ProgressView()
-                                    .frame(width: 28, height: 28)
-                            } else {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.system(size: 28))
-                            }
-                        }
-                        .foregroundColor(Color(.systemMint))
-                    }
-                    .padding(.horizontal, 32)
-                    .padding(.top, 12)
-                    
-                    Spacer()
-                    
-                    // "Go" button
-                    Button {
-                        showNextPage = true
-                    } label: {
-                        Text("Go")
-                            .font(.system(size: 22, weight: .semibold, design: .rounded))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color(.systemTeal).opacity(0.75),
-                                                                Color(.systemMint).opacity(0.8)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                            Text("Go")
+                                .font(.system(size: 22, weight: .semibold, design: .rounded))
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color(.systemTeal).opacity(0.75),
+                                                                    Color(.systemMint).opacity(0.8)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                            )
-                            .foregroundColor(.white)
-                            .cornerRadius(15)
-                            .shadow(color: Color(.systemTeal).opacity(0.12), radius: 8, x: 0, y: 3)
+                                .foregroundColor(.white)
+                                .cornerRadius(16)
+                                .shadow(color: Color(.systemTeal).opacity(0.12), radius: 8, x: 0, y: 3)
+                        }
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 28)
+                        .disabled(!canProceed)
+                        .navigationDestination(isPresented: $showNextPage) {
+                            NextPageView(habits: finalHabitNames) // NextPageView(habits: [String]) is what your file uses
+                        }
                     }
-                    .padding(.horizontal, 48)
-                    .padding(.bottom, 30)
-                    .navigationDestination(isPresented: $showNextPage) {
-                        NextPageView(habits: habits.map { $0.habit_name })
-                    }
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 10)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .onAppear {
-            // Show default habits immediately
-            habits = defaultHabits
-        }
-        .task {
-            await loadHabits()
-        }
-    }
-    
-    // MARK: - Helper Methods
-    @MainActor
-    private func loadHabits() async {
-        guard authManager.isLoggedIn else { return }
-        
-        let fetched = await authManager.fetchHabits()
-        
-        // Merge default habits with fetched habits (avoid duplicates)
-        var merged = defaultHabits
-        for habit in fetched {
-            if !merged.contains(where: { $0.habit_name == habit.habit_name }) {
-                merged.append(habit)
-            }
-        }
-        habits = merged
-    }
-    
-    @MainActor
-    private func addHabit(name: String) async {
-        isLoading = true
-        
-        // 1️⃣ Optimistically add a temporary habit
-        let tempHabit = DBHabit(id: UUID().uuidString, habit_name: name)
-        habits.append(tempHabit)
-        newHabit = ""
-        
-        // 2️⃣ Save to Supabase
-        await authManager.saveHabit(name: name)
-        
-        // 3️⃣ Fetch all habits from Supabase
-        let fetched = await authManager.fetchHabits()
-        
-        // 4️⃣ Merge fetched habits with local habits, avoiding duplicates by habit_name
-        var merged: [DBHabit] = []
-        
-        // Add all unique habits from local + fetched
-        for habit in habits + fetched {
-            if !merged.contains(where: { $0.habit_name == habit.habit_name }) {
-                merged.append(habit)
-            }
-        }
-        
-        habits = merged
-        isLoading = false
+        .task { await loadPersonalHabits() } // load on first appear
     }
 
+    // MARK: - Derived data
+    private var canProceed: Bool {
+        // must have at least one selected/env or personal
+        guard !(selectedEnvIDs.isEmpty && personalHabits.isEmpty) else { return false }
+        // if AC selected, require a temperature within range
+        if selectedEnvIDs.contains("ac") {
+            return (18.0...30.0).contains(acTemp)
+        }
+        return true
+    }
+
+    private var finalHabitNames: [String] {
+        let envNames: [String] = ENV_OPTIONS.compactMap { opt in
+            guard selectedEnvIDs.contains(opt.id) else { return nil }
+            if opt.id == "ac" {
+                return "Airconditioner only down to \(String(format: "%.1f", acTemp))°C"
+            } else {
+                return opt.title
+            }
+        }
+
+        // Personal habits are stored as DBHabit via Supabase
+        let personal = personalHabits.map { $0.habit_name }
+
+        // Deduplicate by name, keep order (environmental first, then personal)
+        var seen = Set<String>()
+        let combined = (envNames + personal).filter { seen.insert($0).inserted }
+        return combined
+    }
+
+    // MARK: - Helpers
+    @ViewBuilder
+    private func sectionCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.system(size: 22, weight: .semibold, design: .rounded))
+                .padding(.horizontal, 6)
+
+            content()
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.white.opacity(0.75))
+                .shadow(color: Color(.systemTeal).opacity(0.10), radius: 8, x: 0, y: 4)
+        )
+    }
+
+    @MainActor
+    private func loadPersonalHabits() async {
+        guard authManager.isLoggedIn else { return }
+        let fetched = await authManager.fetchHabits()
+        personalHabits = fetched
+    }
+
+    @MainActor
+    private func addPersonalHabit() async {
+        let trimmed = newPersonalHabit.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        isSavingPersonal = true
+
+        // optimistic local append
+        personalHabits.append(DBHabit(id: UUID().uuidString, habit_name: trimmed))
+        newPersonalHabit = ""
+
+        // persist
+        await authManager.saveHabit(name: trimmed)
+
+        // reload from DB (authoritative source)
+        await loadPersonalHabits()
+        isSavingPersonal = false
+    }
 }
+
