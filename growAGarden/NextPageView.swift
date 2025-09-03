@@ -560,15 +560,29 @@ struct EmptyGrassTile: View {
     }
 }
 
-// MARK: - Enhanced Check-In View
+// MARK: - Enhanced Check-In View (with quantity + impact logging)
 struct HabitCheckInView: View {
     @Binding var plant: Plant
     @Environment(\.dismiss) var dismiss
+    
+    @ObservedObject private var impactStore = ImpactStore.shared
+    private let calc = ImpactCalculator()
+    
+    // UI State for inputs
+    @State private var km: Double = 2.0
+    @State private var hours: Double = 1.0
+    @State private var bottles: Int = 1
+    @State private var meals: Int = 1
+    @State private var loads: Int = 1
+    @State private var countUnknown: Int = 1
     @State private var showConfetti = false
-
+    
+    private var kind: HabitKind {
+        calc.kind(for: plant.habit)
+    }
+    
     var body: some View {
         ZStack {
-            // Beautiful gradient background
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.9, green: 0.95, blue: 1.0),
@@ -578,115 +592,189 @@ struct HabitCheckInView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-
-            VStack(spacing: 32) {
-                Spacer()
-
-                // Plant preview
-                VStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.green.opacity(0.2))
-                            .frame(width: 120, height: 120)
-
-                        Image(imageNameForGrowth(plant))
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                    }
-
+            
+            VStack(spacing: 22) {
+                Spacer(minLength: 8)
+                
+                // Title + plant
+                VStack(spacing: 10) {
                     Text(plant.habit)
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
+                    
+                    Image(imageNameForGrowth(plant))
+                        .resizable()
+                        .frame(width: 64, height: 64)
+                        .shadow(radius: 4)
                 }
-
-                Text("Did you complete this habit today?")
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-
-                // Enhanced action buttons
-                HStack(spacing: 24) {
-                    Button {
-                        plant.state = .sprout
-                        plant.growthLevel += 1
-                        plant.lastCheckInDate = Date()
-                        showConfetti = true
-
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            dismiss()
-                        }
-                    } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 32))
-                            Text("Yes!")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                        }
-                        .foregroundColor(.white)
-                        .frame(width: 120, height: 100)
-                        .background(
-                            LinearGradient(
-                                colors: [Color.green, Color.mint],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .cornerRadius(20)
-                        .shadow(color: .green.opacity(0.4), radius: 8, x: 0, y: 4)
-                    }
-
-                    Button {
+                
+                // Dynamic input form
+                inputForm
+                
+                // Buttons
+                HStack(spacing: 18) {
+                    Button(role: .cancel) {
                         plant.state = .wilt
                         plant.lastCheckInDate = Date()
                         dismiss()
                     } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 32))
-                            Text("Not yet")
-                                .font(.headline)
-                                .fontWeight(.semibold)
+                        labelBox(icon: "xmark.circle.fill", title: "Not yet", colors: [.gray, .secondary])
+                    }
+                    
+                    Button {
+                        // Update growth
+                        plant.state = .sprout
+                        plant.growthLevel += 1
+                        plant.lastCheckInDate = Date()
+                        
+                        // Log impact
+                        logImpact()
+                        
+                        showConfetti = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                            dismiss()
                         }
-                        .foregroundColor(.white)
-                        .frame(width: 120, height: 100)
-                        .background(
-                            LinearGradient(
-                                colors: [Color.gray, Color.secondary],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .cornerRadius(20)
-                        .shadow(color: .gray.opacity(0.4), radius: 8, x: 0, y: 4)
+                    } label: {
+                        labelBox(icon: "checkmark.circle.fill", title: "Save", colors: [.green, .mint])
                     }
                 }
-
-                Spacer()
+                .padding(.top, 4)
+                
+                Spacer(minLength: 8)
             }
             .padding()
-
-            // Confetti effect
-            if showConfetti {
-                ConfettiView()
+            
+            if showConfetti { ConfettiView() }
+        }
+    }
+    
+    @ViewBuilder
+    private var inputForm: some View {
+        switch kind {
+        case .bike:
+            formCard {
+                HStack {
+                    Image(systemName: "bicycle")
+                    Text("How many km did you bike / take public transport?")
+                    Spacer()
+                }
+                Stepper(value: $km, in: 0...200, step: 0.5) {
+                    Text(String(format: "%.1f km", km))
+                }
+            }
+        case .ac(let setpoint):
+            formCard {
+                HStack {
+                    Image(systemName: "thermometer.sun")
+                    Text(String(format: "AC at %.1f°C — for how many hours today?", setpoint))
+                    Spacer()
+                }
+                Stepper(value: $hours, in: 0...24, step: 0.5) {
+                    Text(String(format: "%.1f h", hours))
+                }
+            }
+        case .bottle:
+            formCard {
+                HStack {
+                    Image(systemName: "bottle.fill")
+                    Text("Disposable bottles avoided today")
+                    Spacer()
+                }
+                Stepper(value: $bottles, in: 0...100) {
+                    Text("\(bottles) bottle(s)")
+                }
+            }
+        case .lunch:
+            formCard {
+                HStack {
+                    Image(systemName: "fork.knife")
+                    Text("Meals brought from home today")
+                    Spacer()
+                }
+                Stepper(value: $meals, in: 0...10) {
+                    Text("\(meals) meal(s)")
+                }
+            }
+        case .hangDry:
+            formCard {
+                HStack {
+                    Image(systemName: "wind")
+                    Text("Loads hang-dried today")
+                    Spacer()
+                }
+                Stepper(value: $loads, in: 0...10) {
+                    Text("\(loads) load(s)")
+                }
+            }
+        case .unknown:
+            formCard {
+                HStack {
+                    Image(systemName: "checkmark.circle")
+                    Text("Times completed today")
+                    Spacer()
+                }
+                Stepper(value: $countUnknown, in: 1...20) {
+                    Text("\(countUnknown) time(s)")
+                }
+                Text("This habit doesn’t have a calculator yet, but your streak will grow!")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
             }
         }
     }
-
+    
+    @ViewBuilder
+    private func formCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12, content: content)
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.9))
+                    .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)
+            )
+            .padding(.horizontal)
+    }
+    
+    private func labelBox(icon: String, title: String, colors: [Color]) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon).font(.system(size: 28))
+            Text(title).font(.headline).fontWeight(.semibold)
+        }
+        .foregroundColor(.white)
+        .frame(width: 130, height: 96)
+        .background(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
+        .cornerRadius(20)
+        .shadow(color: colors.first?.opacity(0.4) ?? .black.opacity(0.3), radius: 8, x: 0, y: 4)
+    }
+    
+    private func logImpact() {
+        switch kind {
+        case .bike:
+            impactStore.logBike(habitName: plant.habit, km: km)
+        case .ac(let setpoint):
+            impactStore.logAC(habitName: plant.habit, setpointC: setpoint, hours: hours)
+        case .bottle:
+            impactStore.logBottle(habitName: plant.habit, count: bottles)
+        case .lunch:
+            impactStore.logLunch(habitName: plant.habit, meals: meals)
+        case .hangDry:
+            impactStore.logHangDry(habitName: plant.habit, loads: loads)
+        case .unknown:
+            impactStore.logUnknown(habitName: plant.habit, count: countUnknown)
+        }
+    }
+    
     private func imageNameForGrowth(_ plant: Plant) -> String {
         switch (plant.state, plant.growthLevel) {
-            case (.seed, _): return "tree_1"
-            case (.sprout, 0): return "tree_2"
-            case (.sprout, 1): return "tree_3"
-            case (.sprout, 2...): return "tree_4" // ensure your asset name matches
-            default: return "tree_1"
+        case (.seed, _): return "tree_1"
+        case (.sprout, 0): return "tree_2"
+        case (.sprout, 1): return "tree_3"
+        case (.sprout, 2...): return "tree_4"
+        default: return "tree_1"
         }
     }
 }
+
 
 // MARK: - Confetti View
 struct ConfettiView: View {
@@ -712,4 +800,3 @@ struct ConfettiView: View {
         .onAppear { animate = true }
     }
 }
-
