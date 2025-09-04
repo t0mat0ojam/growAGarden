@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - DBHabit Model (unchanged)
+// MARK: - DBHabit Model (matches your AuthManager)
 struct DBHabit: Identifiable, Codable, Equatable {
     let id: String
     let habit_name: String
@@ -21,11 +21,31 @@ private let ENV_OPTIONS: [EnvironmentalOption] = [
     .init(id: "hangdry", title: "Hang-dry laundry instead of using a dryer",  requiresTemperature: false)
 ]
 
+// Helpers
+private extension String {
+    var trimmedOrNil: String? {
+        let s = trimmingCharacters(in: .whitespacesAndNewlines)
+        return s.isEmpty ? nil : s
+    }
+}
+private extension Array where Element == DBHabit {
+    mutating func mergeCaseInsensitive(_ incoming: [DBHabit]) {
+        var seen = Set(self.map { $0.habit_name.lowercased() })
+        for item in incoming {
+            let key = item.habit_name.lowercased()
+            if !seen.contains(key) {
+                self.append(item)
+                seen.insert(key)
+            }
+        }
+    }
+}
+
 // MARK: - ContentView
 struct ContentView: View {
     @EnvironmentObject var authManager: AuthManager
 
-    // Personal (user-typed) habits loaded/saved via Supabase
+    // Personal (user-typed) habits; we KEEP these locally and only MERGE fetched ones in
     @State private var personalHabits: [DBHabit] = []
     @State private var newPersonalHabit: String = ""
     @State private var isSavingPersonal = false
@@ -40,7 +60,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background
                 LinearGradient(
                     gradient: Gradient(colors: [Color(.systemMint).opacity(0.2),
                                                 Color(.systemTeal).opacity(0.07)]),
@@ -127,7 +146,7 @@ struct ContentView: View {
                                                 .font(.system(size: 28))
                                         }
                                     }
-                                    .disabled(newPersonalHabit.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSavingPersonal)
+                                    .disabled(newPersonalHabit.trimmedOrNil == nil || isSavingPersonal)
                                     .foregroundColor(Color(.systemMint))
                                 }
 
@@ -146,7 +165,10 @@ struct ContentView: View {
                                             Button {
                                                 Task {
                                                     await authManager.deleteHabit(h)
-                                                    await loadPersonalHabits()
+                                                    // remove locally regardless of server result
+                                                    personalHabits.removeAll {
+                                                        $0.id == h.id || $0.habit_name.lowercased() == h.habit_name.lowercased()
+                                                    }
                                                 }
                                             } label: {
                                                 Image(systemName: "trash")
@@ -165,10 +187,23 @@ struct ContentView: View {
                         }
 
                         // -------------------------------
-                        // Go button
+                        // Go button (does not wait for fetch; includes typed item)
                         // -------------------------------
                         Button {
-                            showNextPage = true
+                            Task {
+                                // If user typed but didn’t press ＋, include it locally AND try to save
+                                if let typed = newPersonalHabit.trimmedOrNil {
+                                    let new = DBHabit(id: UUID().uuidString, habit_name: typed)
+                                    // Add locally if not duplicate
+                                    if !personalHabits.contains(where: { $0.habit_name.lowercased() == typed.lowercased() }) {
+                                        personalHabits.append(new)
+                                    }
+                                    newPersonalHabit = ""
+                                    // Fire-and-forget save; do not replace our local list on empty fetch
+                                    await authManager.saveHabit(name: typed)
+                                }
+                                showNextPage = true
+                            }
                         } label: {
                             Text("Go")
                                 .font(.system(size: 22, weight: .semibold, design: .rounded))
@@ -190,7 +225,7 @@ struct ContentView: View {
                         .padding(.bottom, 28)
                         .disabled(!canProceed)
                         .navigationDestination(isPresented: $showNextPage) {
-                            NextPageView(habits: finalHabitNames) // NextPageView(habits: [String]) is what your file uses
+                            NextPageView(habits: finalHabitNames)
                         }
                     }
                     .padding(.horizontal, 18)
@@ -198,21 +233,19 @@ struct ContentView: View {
                 }
             }
         }
-        .task { await loadPersonalHabits() } // load on first appear
+        .task { await initialFetchMerge() } // merge server habits (if any) on first appear
     }
 
     // MARK: - Derived data
     private var canProceed: Bool {
-        // must have at least one selected/env or personal
-        guard !(selectedEnvIDs.isEmpty && personalHabits.isEmpty) else { return false }
-        // if AC selected, require a temperature within range
-        if selectedEnvIDs.contains("ac") {
-            return (18.0...30.0).contains(acTemp)
-        }
+        // allow proceed if any selected env, any saved personal, or a typed (unsaved) personal
+        if selectedEnvIDs.isEmpty && personalHabits.isEmpty && newPersonalHabit.trimmedOrNil == nil { return false }
+        if selectedEnvIDs.contains("ac") { return (18.0...30.0).contains(acTemp) }
         return true
     }
 
     private var finalHabitNames: [String] {
+        // Environmental
         let envNames: [String] = ENV_OPTIONS.compactMap { opt in
             guard selectedEnvIDs.contains(opt.id) else { return nil }
             if opt.id == "ac" {
@@ -222,13 +255,18 @@ struct ContentView: View {
             }
         }
 
-        // Personal habits are stored as DBHabit via Supabase
-        let personal = personalHabits.map { $0.habit_name }
+        // Personal (local)
+        var names = envNames + personalHabits.map { $0.habit_name }
 
-        // Deduplicate by name, keep order (environmental first, then personal)
+        // Also include a typed-but-not-yet-saved habit
+        if let typed = newPersonalHabit.trimmedOrNil {
+            names.append(typed)
+        }
+
+        // Deduplicate (case-insensitive), keep order
         var seen = Set<String>()
-        let combined = (envNames + personal).filter { seen.insert($0).inserted }
-        return combined
+        let unique = names.filter { seen.insert($0.lowercased()).inserted }
+        return unique
     }
 
     // MARK: - Helpers
@@ -249,28 +287,36 @@ struct ContentView: View {
         )
     }
 
+    // Merge-only fetch: never clear local if server returns empty
     @MainActor
-    private func loadPersonalHabits() async {
+    private func initialFetchMerge() async {
         guard authManager.isLoggedIn else { return }
         let fetched = await authManager.fetchHabits()
-        personalHabits = fetched
+        if !fetched.isEmpty {
+            personalHabits.mergeCaseInsensitive(fetched)
+        }
     }
 
     @MainActor
     private func addPersonalHabit() async {
-        let trimmed = newPersonalHabit.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
+        guard let trimmed = newPersonalHabit.trimmedOrNil else { return }
         isSavingPersonal = true
 
-        // optimistic local append
-        personalHabits.append(DBHabit(id: UUID().uuidString, habit_name: trimmed))
+        // optimistic local add (so it doesn't disappear)
+        let local = DBHabit(id: UUID().uuidString, habit_name: trimmed)
+        if !personalHabits.contains(where: { $0.habit_name.lowercased() == trimmed.lowercased() }) {
+            personalHabits.append(local)
+        }
         newPersonalHabit = ""
 
-        // persist
+        // Save to Supabase, then try merging fetched (but do NOT wipe local on empty)
         await authManager.saveHabit(name: trimmed)
-
-        // reload from DB (authoritative source)
-        await loadPersonalHabits()
+        if authManager.isLoggedIn {
+            let fetched = await authManager.fetchHabits()
+            if !fetched.isEmpty {
+                personalHabits.mergeCaseInsensitive(fetched)
+            }
+        }
         isSavingPersonal = false
     }
 }
