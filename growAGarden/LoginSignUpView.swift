@@ -9,8 +9,12 @@ struct LoginSignUpView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                // Eco-friendly gradient background
                 LinearGradient(
-                    gradient: Gradient(colors: [Color(.systemMint).opacity(0.2), Color(.systemTeal).opacity(0.07)]),
+                    gradient: Gradient(colors: [
+                        Color(.systemGreen).opacity(0.05),
+                        Color(.systemMint).opacity(0.03)
+                    ]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -19,94 +23,85 @@ struct LoginSignUpView: View {
                 VStack(spacing: 28) {
                     Spacer()
 
-                    Text("Welcome to GrowAGarden")
-                        .font(.system(size: 32, weight: .semibold, design: .rounded))
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 20)
+                    // Header
+                    VStack(spacing: 8) {
+                        Text("🌱 Welcome to GrowAGarden")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.center)
 
-                    TextField("Email", text: $email)
-                        .textInputAutocapitalization(.never)
-                        .disableAutocorrection(true)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .background(Color(.systemGray6).opacity(0.96))
-                        .cornerRadius(12)
-                        .font(.system(size: 18, design: .rounded))
+                        Text("Grow habits, grow a sustainable you")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.bottom, 8)
 
-                    SecureField("Password", text: $password)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .background(Color(.systemGray6).opacity(0.96))
-                        .cornerRadius(12)
-                        .font(.system(size: 18, design: .rounded))
-
+                    // Input Fields inside card
                     VStack(spacing: 16) {
-                        // LOGIN BUTTON
+                        TextField("Email", text: $email)
+                            .textInputAutocapitalization(.never)
+                            .disableAutocorrection(true)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(12)
+                            .font(.system(size: 18, design: .rounded))
+
+                        SecureField("Password", text: $password)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(12)
+                            .font(.system(size: 18, design: .rounded))
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.white.opacity(0.85))
+                            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+                    )
+                    .padding(.horizontal, 24)
+
+                    // Buttons
+                    VStack(spacing: 16) {
                         Button(action: {
-                            Task {
-                                await login()
-                            }
+                            Task { await login() }
                         }) {
                             if isLoading {
                                 ProgressView()
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(Color.blue.opacity(0.7))
-                                    .cornerRadius(15)
                             } else {
                                 Text("Login")
-                                    .font(.system(size: 20, weight: .semibold, design: .rounded))
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [Color(.systemBlue).opacity(0.75), Color.blue.opacity(0.85)]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
-                                    .foregroundColor(.white)
-                                    .cornerRadius(15)
-                                    .shadow(color: Color(.systemBlue).opacity(0.15), radius: 6, x: 0, y: 3)
                             }
                         }
+                        .buttonStyle(PrimaryButtonStyle())
 
-                        // SIGN UP BUTTON
                         Button(action: {
-                            Task {
-                                await signUp()
-                            }
+                            Task { await signUp() }
                         }) {
                             if isLoading {
                                 ProgressView()
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(Color.green.opacity(0.7))
-                                    .cornerRadius(15)
                             } else {
                                 Text("Sign Up")
-                                    .font(.system(size: 20, weight: .semibold, design: .rounded))
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [Color(.systemGreen).opacity(0.65), Color(.systemGreen).opacity(0.85)]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
-                                    .foregroundColor(.white)
-                                    .cornerRadius(15)
-                                    .shadow(color: Color(.systemGreen).opacity(0.15), radius: 6, x: 0, y: 3)
                             }
                         }
+                        .buttonStyle(SecondaryButtonStyle())
                     }
+                    .padding(.horizontal, 24)
 
                     Spacer()
                 }
-                .padding(.horizontal, 32)
             }
+            .navigationTitle("")
+            .navigationBarHidden(true)
         }
     }
 
