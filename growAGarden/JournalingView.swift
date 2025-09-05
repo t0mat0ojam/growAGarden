@@ -16,118 +16,112 @@ struct JournalingView: View {
     private let availableEmojis = ["😊", "😢", "🤬", "😤", "💩", "🔥", "💖", "🎯", "📚", "😴"]
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
+                // Eco-friendly background
                 LinearGradient(
-                    gradient: Gradient(colors: [Color("ParchmentTop"), Color("ParchmentBottom")]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+                    gradient: Gradient(colors: [
+                        Color(.systemMint).opacity(0.2),
+                        Color(.systemTeal).opacity(0.08)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
                 .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Dear Journal,")
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
+                    VStack(alignment: .leading, spacing: 22) {
+                        // Header
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("🌱 Dear Journal")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
 
                             Text("Reflect, write, and grow a little each day.")
-                                .font(.subheadline)
+                                .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.secondary)
                         }
                         .padding(.horizontal)
 
+                        // ----------------------
                         // Emoji Picker
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("How are you feeling?")
-                                .font(.headline)
-
+                        // ----------------------
+                        sectionCard(title: "How are you feeling?") {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 6), spacing: 12) {
                                 ForEach(availableEmojis, id: \.self) { emoji in
-                                    Button(action: {
-                                        toggleEmoji(emoji)
-                                    }) {
+                                    Button(action: { toggleEmoji(emoji) }) {
                                         Text(emoji)
                                             .font(.title2)
                                             .padding(8)
-                                            .background(selectedEmojis.contains(emoji) ? Color.blue.opacity(0.3) : Color.white.opacity(0.7))
-                                            .cornerRadius(8)
+                                            .frame(maxWidth: .infinity)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(selectedEmojis.contains(emoji) ?
+                                                          Color(.systemTeal).opacity(0.25) :
+                                                          Color.white.opacity(0.9))
+                                            )
                                     }
                                     .disabled(!selectedEmojis.contains(emoji) && selectedEmojis.count >= 3)
                                 }
                             }
                         }
-                        .padding(.horizontal)
 
+                        // ----------------------
                         // Journal Entry
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Today's Entry")
-                                .font(.title2)
-                                .fontWeight(.medium)
+                        // ----------------------
+                        sectionCard(title: "Today's Entry") {
+                            VStack(spacing: 12) {
+                                TextEditor(text: $currentJournalText)
+                                    .frame(height: 150)
+                                    .padding()
+                                    .background(Color.white.opacity(0.9))
+                                    .cornerRadius(12)
+                                    .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
 
-                            TextEditor(text: $currentJournalText)
-                                .frame(height: 150)
-                                .padding()
-                                .background(Color.white.opacity(0.85))
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                )
-
-                            Button(action: saveJournalEntry) {
-                                HStack {
-                                    Image(systemName: "square.and.arrow.down")
-                                    Text("Save Entry")
+                                Button(action: saveJournalEntry) {
+                                    HStack {
+                                        Image(systemName: "square.and.arrow.down")
+                                        Text("Save Entry")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.blue.opacity(0.8))
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
+                                .buttonStyle(PrimaryButtonStyle())
+                                .disabled(currentJournalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                             }
                         }
-                        .padding()
-                        .background(Color.white.opacity(0.2))
-                        .cornerRadius(16)
-                        .padding(.horizontal)
 
+                        // ----------------------
                         // Past Entries
+                        // ----------------------
                         if !journalEntries.isEmpty {
-                            Text("Past Entries")
-                                .font(.title2)
-                                .fontWeight(.medium)
-                                .padding(.horizontal)
+                            sectionCard(title: "Past Entries") {
+                                VStack(spacing: 14) {
+                                    ForEach(journalEntries.sorted(by: { $0.date > $1.date })) { entry in
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            HStack {
+                                                Text(entry.date, style: .date)
+                                                    .font(.headline)
+                                                Spacer()
+                                                Text(entry.date, style: .time)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.secondary)
+                                            }
 
-                            ForEach(journalEntries.sorted(by: { $0.date > $1.date })) { entry in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    HStack {
-                                        Text(entry.date, style: .date)
-                                            .font(.headline)
+                                            if !entry.emojis.isEmpty {
+                                                Text(entry.emojis.joined(separator: " "))
+                                                    .font(.title3)
+                                            }
 
-                                        Spacer()
-
-                                        Text(entry.date, style: .time)
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
+                                            Text(entry.text)
+                                                .font(.body)
+                                                .foregroundColor(.primary)
+                                        }
+                                        .padding()
+                                        .background(Color.white.opacity(0.9))
+                                        .cornerRadius(14)
+                                        .shadow(color: Color(.systemTeal).opacity(0.1), radius: 6, x: 0, y: 3)
                                     }
-
-                                    if !entry.emojis.isEmpty {
-                                        Text(entry.emojis.joined(separator: " "))
-                                            .font(.title2)
-                                    }
-
-                                    Text(entry.text)
-                                        .font(.body)
-                                        .foregroundColor(.primary)
                                 }
-                                .padding()
-                                .background(Color.white.opacity(0.85))
-                                .cornerRadius(12)
-                                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
-                                .padding(.horizontal)
-                                .padding(.bottom, 5)
                             }
                         } else {
                             Text("No past entries yet. Start journaling!")
@@ -145,6 +139,25 @@ struct JournalingView: View {
         }
     }
 
+    // MARK: - Reusable section card
+    @ViewBuilder
+    private func sectionCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .padding(.horizontal, 6)
+
+            content()
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.white.opacity(0.75))
+                .shadow(color: Color(.systemTeal).opacity(0.08), radius: 6, x: 0, y: 3)
+        )
+        .padding(.horizontal)
+    }
+
     // MARK: - Emoji Toggle
     private func toggleEmoji(_ emoji: String) {
         if let index = selectedEmojis.firstIndex(of: emoji) {
@@ -154,13 +167,9 @@ struct JournalingView: View {
         }
     }
 
-    // MARK: - Save / Load / Delete
+    // MARK: - Save / Load
     private func saveJournalEntry() {
-        guard !currentJournalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            print("Journal entry is empty.")
-            return
-        }
-
+        guard !currentJournalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let newEntry = JournalEntry(date: Date(), text: currentJournalText, emojis: selectedEmojis)
         journalEntries.insert(newEntry, at: 0)
         currentJournalText = ""
@@ -170,27 +179,16 @@ struct JournalingView: View {
 
     private func loadJournalEntries() {
         if let savedEntriesData = UserDefaults.standard.data(forKey: journalEntriesKey) {
-            do {
-                let decodedEntries = try JSONDecoder().decode([JournalEntry].self, from: savedEntriesData)
+            if let decodedEntries = try? JSONDecoder().decode([JournalEntry].self, from: savedEntriesData) {
                 journalEntries = decodedEntries
-            } catch {
-                print("Error decoding journal entries: \(error.localizedDescription)")
             }
         }
     }
 
     private func saveJournalEntriesToUserDefaults() {
-        do {
-            let encodedEntries = try JSONEncoder().encode(journalEntries)
+        if let encodedEntries = try? JSONEncoder().encode(journalEntries) {
             UserDefaults.standard.set(encodedEntries, forKey: journalEntriesKey)
-        } catch {
-            print("Error encoding journal entries: \(error.localizedDescription)")
         }
-    }
-
-    private func deleteJournalEntry(at offsets: IndexSet) {
-        journalEntries.remove(atOffsets: offsets)
-        saveJournalEntriesToUserDefaults()
     }
 }
 
