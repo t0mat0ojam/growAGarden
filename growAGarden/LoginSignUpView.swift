@@ -25,12 +25,12 @@ struct LoginSignUpView: View {
 
                     // Header
                     VStack(spacing: 8) {
-                        Text("🌱 Welcome to GrowAGarden")
+                        Text("🌱 GrowAGardenへようこそ")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundColor(.primary)
                             .multilineTextAlignment(.center)
 
-                        Text("Grow habits, grow a sustainable you")
+                        Text("習慣を育てて、持続可能な自分に")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -39,7 +39,7 @@ struct LoginSignUpView: View {
 
                     // Input Fields inside card
                     VStack(spacing: 16) {
-                        TextField("Email", text: $email)
+                        TextField("メールアドレス", text: $email)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
                             .padding(.vertical, 12)
@@ -48,7 +48,7 @@ struct LoginSignUpView: View {
                             .cornerRadius(12)
                             .font(.system(size: 18, design: .rounded))
 
-                        SecureField("Password", text: $password)
+                        SecureField("パスワード", text: $password)
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
                             .background(Color.white.opacity(0.9))
@@ -73,7 +73,7 @@ struct LoginSignUpView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding()
                             } else {
-                                Text("Login")
+                                Text("ログイン")
                                     .frame(maxWidth: .infinity)
                                     .padding()
                             }
@@ -88,7 +88,7 @@ struct LoginSignUpView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding()
                             } else {
-                                Text("Sign Up")
+                                Text("新規登録")
                                     .frame(maxWidth: .infinity)
                                     .padding()
                             }
@@ -112,7 +112,7 @@ struct LoginSignUpView: View {
         let success = await authManager.signIn(email: email, password: password)
         isLoading = false
         if !success {
-            print("❌ Login failed")
+            print("❌ ログインに失敗しました")
         }
     }
 
@@ -122,7 +122,7 @@ struct LoginSignUpView: View {
         let success = await authManager.signUp(email: email, password: password)
         isLoading = false
         if !success {
-            print("❌ Sign-up failed")
+            print("❌ 新規登録に失敗しました")
         }
     }
 }

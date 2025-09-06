@@ -8,7 +8,7 @@ struct VolunteerView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background gradient
+                // 背景グラデーション
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color(.systemBlue).opacity(0.1),
@@ -22,31 +22,31 @@ struct VolunteerView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Header
+                        // ヘッダー
                         VStack(spacing: 12) {
                             HStack {
                                 Text("🤝")
                                     .font(.system(size: 32))
-                                Text("Volunteer Opportunities")
+                                Text("ボランティア募集")
                                     .font(.system(size: 28, weight: .bold, design: .rounded))
                                     .foregroundColor(.primary)
                                 Text("🌱")
                                     .font(.system(size: 32))
                             }
                             
-                            Text("Make a difference in your community")
+                            Text("地域のために、あなたの力を活かしましょう")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
                         }
                         .padding(.top, 16)
                         
-                        // Search bar
+                        // 検索バー
                         HStack {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.secondary)
                             
-                            TextField("Search opportunities...", text: $searchText)
+                            TextField("ボランティアを検索...", text: $searchText)
                                 .textFieldStyle(PlainTextFieldStyle())
                         }
                         .padding(12)
@@ -57,9 +57,9 @@ struct VolunteerView: View {
                         )
                         .padding(.horizontal)
                         
-                        // Featured opportunity
+                        // 注目のボランティア
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("🌟 Featured This Week")
+                            Text("🌟 今週の注目")
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.horizontal)
@@ -68,37 +68,37 @@ struct VolunteerView: View {
                                 .padding(.horizontal)
                         }
                         
-                        // Categories
+                        // カテゴリ別
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Browse by Category")
+                            Text("カテゴリから探す")
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.horizontal)
                             
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
                                 CategoryCard(
-                                    title: "Environment",
+                                    title: "環境",
                                     icon: "leaf.fill",
                                     color: .green,
                                     count: 1
                                 )
                                 
                                 CategoryCard(
-                                    title: "Community",
+                                    title: "地域",
                                     icon: "house.fill",
                                     color: .blue,
                                     count: 0
                                 )
                                 
                                 CategoryCard(
-                                    title: "Education",
+                                    title: "教育",
                                     icon: "book.fill",
                                     color: .orange,
                                     count: 0
                                 )
                                 
                                 CategoryCard(
-                                    title: "Health",
+                                    title: "健康",
                                     icon: "heart.fill",
                                     color: .red,
                                     count: 0
@@ -107,9 +107,9 @@ struct VolunteerView: View {
                             .padding(.horizontal)
                         }
                         
-                        // Single Volunteer Opportunity
+                        // 単発ボランティア
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Available Opportunity")
+                            Text("募集中の活動")
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.horizontal)
@@ -120,12 +120,14 @@ struct VolunteerView: View {
                             }
                             .padding(.horizontal)
                         }
+                        
+                        // ヒント
                         VStack(spacing: 16) {
-                            Text("💡 Tip")
+                            Text("💡 ワンポイント")
                                 .font(.headline)
                                 .fontWeight(.bold)
                             
-                            Text("Volunteering not only helps your community but also contributes to your personal growth and well-being!")
+                            Text("ボランティアは地域に貢献できるだけでなく、あなた自身の成長や心の健康にもつながります！")
                                 .font(.body)
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.secondary)
@@ -152,16 +154,16 @@ struct VolunteerView: View {
         }
     }
     
-    // Single volunteer opportunity
+    // 単発の例
     private var singleOpportunity: VolunteerOpportunity {
         VolunteerOpportunity(
-            title: "Tree Planting Event",
-            organization: "Tokyo Green Initiative",
-            date: "This Sunday, 8:00 AM - 12:00 PM",
-            location: "Setagaya Park",
-            description: "Join us for our special tree planting event at Setagaya Park! Help make Tokyo greener while meeting fellow environmental enthusiasts. All materials and refreshments provided.",
+            title: "植樹イベント",
+            organization: "東京グリーンイニシアチブ",
+            date: "今週日曜 8:00〜12:00",
+            location: "世田谷公園",
+            description: "世田谷公園での特別な植樹イベントに参加しませんか？東京をもっと緑豊かにしながら、環境に関心のある仲間と出会えます。道具や飲み物はすべて用意されています。",
             category: .environment,
-            duration: "4 hours",
+            duration: "4時間",
             spotsAvailable: 15
         )
     }
@@ -185,10 +187,10 @@ enum VolunteerCategory {
     
     var displayName: String {
         switch self {
-        case .environment: return "Environment"
-        case .community: return "Community"
-        case .education: return "Education"
-        case .health: return "Health"
+        case .environment: return "環境"
+        case .community: return "地域"
+        case .education: return "教育"
+        case .health: return "健康"
         }
     }
 }
@@ -199,18 +201,18 @@ struct FeaturedOpportunityCard: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("🌳 Tree Planting Event")
+                    Text("🌳 植樹イベント")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
                     
-                    Text("Tokyo Green Initiative")
+                    Text("東京グリーンイニシアチブ")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
                     
                     HStack {
                         Image(systemName: "calendar")
                             .foregroundColor(.green)
-                        Text("This Sunday, 8:00 AM")
+                        Text("今週日曜 8:00〜")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.primary)
                     }
@@ -218,7 +220,7 @@ struct FeaturedOpportunityCard: View {
                     HStack {
                         Image(systemName: "location")
                             .foregroundColor(.green)
-                        Text("Setagaya Park")
+                        Text("世田谷公園")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.primary)
                     }
@@ -230,22 +232,20 @@ struct FeaturedOpportunityCard: View {
                     Text("🌲")
                         .font(.system(size: 40))
                     
-                    Text("15 spots left")
+                    Text("残り15枠")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.green)
                 }
             }
             
-            Text("Join us for our special tree planting event at Setagaya Park! Help make Tokyo greener while meeting fellow environmental enthusiasts.")
+            Text("世田谷公園での特別な植樹イベントに参加して、東京をもっと緑豊かにしましょう！環境活動に関心のある仲間と出会えます。")
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
-                .lineLimit(nil)
             
-            // Secret prize indicator
             HStack {
                 Text("🎁")
                     .font(.title2)
-                Text("Participants receive a secret prize!")
+                Text("参加者には秘密のプレゼントあり！")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.purple)
                 Text("❓")
@@ -260,9 +260,9 @@ struct FeaturedOpportunityCard: View {
             )
             
             Button(action: {
-                // Handle sign up action
+                // 申し込み処理
             }) {
-                Text("Sign Up Now")
+                Text("今すぐ申し込む")
                     .font(.system(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
@@ -308,12 +308,10 @@ struct CategoryCard: View {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text("opportunities")
+                Text("件の募集")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(16)
@@ -349,7 +347,7 @@ struct VolunteerOpportunityCard: View {
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.blue)
                     
-                    Text("spots left")
+                    Text("残り枠")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.secondary)
                 }
@@ -390,7 +388,7 @@ struct VolunteerOpportunityCard: View {
                 .lineLimit(3)
             
             Button(action: onSignUp) {
-                Text("Learn More & Sign Up")
+                Text("詳細・申し込み")
                     .font(.system(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
@@ -435,9 +433,9 @@ struct VolunteerSignUpSheet: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Header
+                        // ヘッダー
                         VStack(spacing: 12) {
-                            Text("Sign Up to Volunteer")
+                            Text("ボランティアに申し込む")
                                 .font(.system(size: 28, weight: .bold, design: .rounded))
                                 .foregroundColor(.primary)
                             
@@ -448,7 +446,7 @@ struct VolunteerSignUpSheet: View {
                         }
                         .padding(.top)
                         
-                        // Opportunity details
+                        // 詳細
                         VStack(alignment: .leading, spacing: 12) {
                             DetailRow(icon: "building.2", text: opportunity.organization)
                             DetailRow(icon: "calendar", text: opportunity.date)
@@ -462,32 +460,32 @@ struct VolunteerSignUpSheet: View {
                         )
                         .padding(.horizontal)
                         
-                        // Form
+                        // フォーム
                         VStack(spacing: 16) {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Your Information")
+                                Text("あなたの情報")
                                     .font(.headline)
                                     .foregroundColor(.primary)
                                 
-                                TextField("Full Name", text: $name)
+                                TextField("氏名", text: $name)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                 
-                                TextField("Email Address", text: $email)
+                                TextField("メールアドレス", text: $email)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .textInputAutocapitalization(.never)
                                     .disableAutocorrection(true)
                                 
-                                TextField("Phone Number", text: $phone)
+                                TextField("電話番号", text: $phone)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                             }
                         }
                         .padding(.horizontal)
                         
-                        // Sign up button
+                        // ボタン
                         Button(action: {
                             showingConfirmation = true
                         }) {
-                            Text("Complete Sign Up")
+                            Text("申し込みを完了する")
                                 .font(.system(size: 18, weight: .semibold))
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -512,17 +510,17 @@ struct VolunteerSignUpSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Close") {
+                    Button("閉じる") {
                         dismiss()
                     }
                 }
             }
-            .alert("Thank You!", isPresented: $showingConfirmation) {
+            .alert("ありがとうございます！", isPresented: $showingConfirmation) {
                 Button("OK") {
                     dismiss()
                 }
             } message: {
-                Text("You've successfully signed up for \(opportunity.title)! You'll receive a confirmation email shortly.")
+                Text("\(opportunity.title) に申し込みが完了しました。確認メールをお送りします。")
             }
         }
     }
@@ -551,3 +549,4 @@ struct VolunteerView_Previews: PreviewProvider {
         VolunteerView()
     }
 }
+

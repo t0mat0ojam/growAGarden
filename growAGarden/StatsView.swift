@@ -43,9 +43,9 @@ struct StatsView: View {
 
     private var header: some View {
         VStack(spacing: 8) {
-            Text("🌍 Your Environmental Impact")
+            Text("🌍 あなたの環境への影響")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
-            Text("Every habit counts towards a greener planet")
+            Text("すべての習慣がよりグリーンな地球に貢献します")
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.secondary)
         }
@@ -53,11 +53,11 @@ struct StatsView: View {
     }
 
     private var timeframePicker: some View {
-        Picker("Time Frame", selection: $timeframe) {
-            Text("This Week").tag(TimeFrame.week)
-            Text("This Month").tag(TimeFrame.month)
-            Text("This Year").tag(TimeFrame.year)
-            Text("All Time").tag(TimeFrame.allTime)
+        Picker("期間", selection: $timeframe) {
+            Text("今週").tag(TimeFrame.week)
+            Text("今月").tag(TimeFrame.month)
+            Text("今年").tag(TimeFrame.year)
+            Text("全期間").tag(TimeFrame.allTime)
         }
         .pickerStyle(.segmented)
         .padding(.horizontal)
@@ -66,39 +66,39 @@ struct StatsView: View {
     private var summaryGrid: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
             MetricCard(
-                title: "CO₂ Reduced",
+                title: "削減したCO₂",
                 value: String(format: "%.1f kg", totals.co2SavedKg),
                 icon: "leaf.fill",
                 tint: Color.green,
-                subtitle: "Carbon footprint"
+                subtitle: "カーボンフットプリント"
             )
             MetricCard(
-                title: "Energy Saved",
+                title: "節約したエネルギー",
                 value: String(format: "%.1f kWh", totals.energySavedKWh),
                 icon: "bolt.fill",
                 tint: Color.yellow,
-                subtitle: "Electricity / fuel"
+                subtitle: "電力 / 燃料"
             )
             MetricCard(
-                title: "Water Saved",
+                title: "節水量",
                 value: String(format: "%.0f L", totals.waterSavedL),
                 icon: "drop.fill",
                 tint: Color.blue,
-                subtitle: "Manufacturing water"
+                subtitle: "製造に使われる水"
             )
             MetricCard(
-                title: "Waste Diverted",
+                title: "廃棄物削減量",
                 value: String(format: "%.1f kg", totals.wasteDivertedKg),
                 icon: "arrow.3.trianglepath",
                 tint: Color.orange,
-                subtitle: "From landfills"
+                subtitle: "埋立地から回避"
             )
             MetricCard(
-                title: "Plastic Avoided",
+                title: "プラスチック削減量",
                 value: String(format: "%.0f g", totals.plasticSavedKg * 1000),
                 icon: "cube.transparent",
                 tint: Color.teal,
-                subtitle: "Single-use items"
+                subtitle: "使い捨てアイテム"
             )
         }
         .padding(.horizontal)
@@ -110,7 +110,7 @@ struct StatsView: View {
                 Image(systemName: "yensign.circle.fill")
                     .foregroundColor(Color.green)
                     .font(.title2)
-                Text("Money Saved")
+                Text("節約金額")
                     .font(.headline)
                 Spacer()
             }
@@ -137,7 +137,7 @@ struct StatsView: View {
         return VStack(spacing: 12) {
             HStack {
                 Image(systemName: "tree.fill").foregroundColor(.green).font(.title2)
-                Text("Trees Planted Equivalent")
+                Text("植樹換算")
                     .font(.headline)
                 Spacer()
             }
@@ -152,7 +152,7 @@ struct StatsView: View {
                 }
                 Spacer()
             }
-            Text(String(format: "%.1f trees worth of CO₂ absorbed", trees))
+            Text(String(format: "%.1f 本分のCO₂吸収量", trees))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -170,7 +170,7 @@ struct StatsView: View {
 
     private var habitSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Habit Performance")
+            Text("習慣の実績")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .padding(.horizontal)
@@ -189,7 +189,7 @@ struct StatsView: View {
 
     private var motivation: some View {
         VStack(spacing: 12) {
-            Text("🎯 Keep It Up!")
+            Text("🎯 頑張ろう！")
                 .font(.title2)
                 .fontWeight(.bold)
             Text(motivationalMessage(totalCO2: totals.co2SavedKg))
@@ -213,13 +213,13 @@ struct StatsView: View {
     private func motivationalMessage(totalCO2: Double) -> String {
         switch totalCO2 {
         case let x where x > 50:
-            return "Incredible! Your impact rivals planting dozens of trees this year."
+            return "素晴らしい！今年植樹した木に匹敵する影響です。"
         case let x where x > 20:
-            return "Great work! Your consistent choices are adding up fast."
+            return "素敵な取り組みです！日々の積み重ねが大きな成果に。"
         case let x where x > 5:
-            return "Nice start! Keep logging your wins—every day counts."
+            return "良いスタートです！毎日の達成を記録し続けましょう。"
         default:
-            return "Welcome to your sustainability journey. Small steps → big change."
+            return "持続可能な旅へようこそ。小さな一歩が大きな変化につながります。"
         }
     }
 }

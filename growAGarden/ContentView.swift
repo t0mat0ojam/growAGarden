@@ -14,11 +14,11 @@ private struct EnvironmentalOption: Identifiable, Hashable {
 }
 
 private let ENV_OPTIONS: [EnvironmentalOption] = [
-    .init(id: "bike",    title: "Bike/public transportation rather than car", requiresTemperature: false),
-    .init(id: "ac",      title: "Airconditioner only down to x degrees",      requiresTemperature: true),
-    .init(id: "bottle",  title: "Use reusable waterbottle",                    requiresTemperature: false),
-    .init(id: "lunch",   title: "Bring lunch rather than buy",                 requiresTemperature: false),
-    .init(id: "hangdry", title: "Hang-dry laundry instead of using a dryer",  requiresTemperature: false)
+    .init(id: "bike",    title: "車ではなく自転車・公共交通機関を利用する", requiresTemperature: false),
+    .init(id: "ac",      title: "エアコンは設定温度までに抑える",            requiresTemperature: true),
+    .init(id: "bottle",  title: "マイボトルを使う",                          requiresTemperature: false),
+    .init(id: "lunch",   title: "昼食は買わずに持参する",                    requiresTemperature: false),
+    .init(id: "hangdry", title: "乾燥機ではなく自然乾燥をする",              requiresTemperature: false)
 ]
 
 // MARK: - Helpers
@@ -74,12 +74,12 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 28) {
                         // Title
-                        Text("🌿 Choose Your Habits")
+                        Text("🌿 習慣を選ぼう")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .padding(.top, 20)
 
                         // Environmental Habits
-                        sectionCard(title: "Environmental Habits") {
+                        sectionCard(title: "環境にやさしい習慣") {
                             VStack(spacing: 14) {
                                 ForEach(ENV_OPTIONS) { opt in
                                     VStack(alignment: .leading, spacing: 12) {
@@ -97,7 +97,7 @@ struct ContentView: View {
                                         if opt.id == "ac", selectedEnvIDs.contains("ac") {
                                             HStack(spacing: 12) {
                                                 Image(systemName: "thermometer.sun")
-                                                Text("Set temperature")
+                                                Text("設定温度")
                                                 Spacer()
                                                 Stepper(value: $acTemp, in: 18...30, step: 0.5) {
                                                     Text(String(format: "%.1f ℃", acTemp))
@@ -122,10 +122,10 @@ struct ContentView: View {
                         }
 
                         // Personal Habits
-                        sectionCard(title: "Personal Habits") {
+                        sectionCard(title: "自分の習慣") {
                             VStack(spacing: 12) {
                                 HStack {
-                                    TextField("Type a habit…", text: $newPersonalHabit)
+                                    TextField("習慣を入力…", text: $newPersonalHabit)
                                         .textInputAutocapitalization(.sentences)
                                         .disableAutocorrection(false)
                                         .padding(.vertical, 10)
@@ -150,7 +150,7 @@ struct ContentView: View {
                                 }
 
                                 if personalHabits.isEmpty {
-                                    Text("No personal habits yet. Add one above 👆")
+                                    Text("まだ習慣がありません。上に入力して追加しましょう 👆")
                                         .foregroundColor(.secondary)
                                         .font(.footnote)
                                         .padding(.top, 6)
@@ -198,7 +198,7 @@ struct ContentView: View {
                                 showNextPage = true
                             }
                         } label: {
-                            Text("Go")
+                            Text("次へ")
                                 .font(.system(size: 20, weight: .semibold, design: .rounded))
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -229,7 +229,7 @@ struct ContentView: View {
         let envNames: [String] = ENV_OPTIONS.compactMap { opt in
             guard selectedEnvIDs.contains(opt.id) else { return nil }
             if opt.id == "ac" {
-                return "Airconditioner only down to \(String(format: "%.1f", acTemp))°C"
+                return "エアコンは \(String(format: "%.1f", acTemp))℃ に設定"
             } else {
                 return opt.title
             }

@@ -37,11 +37,11 @@ struct SettingsView: View {
                     VStack(spacing: 0) {
                         // Header
                         VStack(spacing: 8) {
-                            Text("🌱 Settings")
+                            Text("🌱 設定")
                                 .font(.system(size: 32, weight: .bold, design: .rounded))
                                 .foregroundColor(.primary)
                             
-                            Text("Customize your sustainable journey")
+                            Text("サステナブルな旅を自分らしくカスタマイズ")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.secondary)
                         }
@@ -51,34 +51,34 @@ struct SettingsView: View {
                         // Settings Sections
                         VStack(spacing: 24) {
                             // Habits Section
-                            SettingsSection(title: "🌿 Your Habits", icon: "leaf.fill") {
+                            SettingsSection(title: "🌿 習慣", icon: "leaf.fill") {
                                 SettingsRow(
-                                    title: "Manage Habits",
-                                    subtitle: "Add, edit, or remove habits",
+                                    title: "習慣を管理",
+                                    subtitle: "追加・編集・削除",
                                     icon: "pencil.circle.fill",
                                     action: { dismiss() }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Habit Categories",
-                                    subtitle: "Organize by environmental impact",
+                                    title: "習慣カテゴリ",
+                                    subtitle: "環境への影響で整理",
                                     icon: "folder.fill",
                                     action: { showCustomizeView = true }
                                 )
                             }
                             
                             // Notifications Section
-                            SettingsSection(title: "🔔 Reminders", icon: "bell.fill") {
+                            SettingsSection(title: "🔔 リマインダー", icon: "bell.fill") {
                                 SettingsToggleRow(
-                                    title: "Daily Reminders",
-                                    subtitle: "Get notified to check in",
+                                    title: "毎日のリマインダー",
+                                    subtitle: "習慣を記録する通知",
                                     icon: "bell.circle.fill",
                                     isOn: $enableNotifications
                                 )
                                 
                                 if enableNotifications {
                                     SettingsRow(
-                                        title: "Reminder Time",
+                                        title: "通知時間",
                                         subtitle: notificationTime.formatted(date: .omitted, time: .shortened),
                                         icon: "clock.fill",
                                         action: { /* Open time picker */ }
@@ -86,73 +86,73 @@ struct SettingsView: View {
                                 }
                                 
                                 SettingsToggleRow(
-                                    title: "Streak Freeze",
-                                    subtitle: "Skip days without breaking streaks",
+                                    title: "ストリーク凍結",
+                                    subtitle: "スキップしても継続記録が途切れない",
                                     icon: "snowflake",
                                     isOn: $enableStreakFreeze
                                 )
                             }
                             
                             // Appearance Section
-                            SettingsSection(title: "🎨 Appearance", icon: "paintbrush.fill") {
+                            SettingsSection(title: "🎨 外観", icon: "paintbrush.fill") {
                                 SettingsToggleRow(
-                                    title: "Dark Mode",
-                                    subtitle: "Reduce energy consumption",
+                                    title: "ダークモード",
+                                    subtitle: "省エネにもつながります",
                                     icon: "moon.fill",
                                     isOn: $darkModeEnabled
                                 )
                                 
                                 SettingsRow(
-                                    title: "Customize Garden",
-                                    subtitle: "Personalize your forest view",
+                                    title: "庭をカスタマイズ",
+                                    subtitle: "自分だけの森をデザイン",
                                     icon: "tree.fill",
                                     action: { showCustomizeView = true }
                                 )
                                 
                                 SettingsToggleRow(
-                                    title: "Week Starts on Monday",
-                                    subtitle: "Calendar and stats preference",
+                                    title: "週の開始を月曜日にする",
+                                    subtitle: "カレンダーと統計の設定",
                                     icon: "calendar",
                                     isOn: $weekStartsOnMonday
                                 )
                             }
                             
                             // Experience Section
-                            SettingsSection(title: "🎯 Experience", icon: "target") {
+                            SettingsSection(title: "🎯 体験", icon: "target") {
                                 SettingsToggleRow(
-                                    title: "Sound Effects",
-                                    subtitle: "Audio feedback for actions",
+                                    title: "効果音",
+                                    subtitle: "行動に音でフィードバック",
                                     icon: "speaker.wave.2.fill",
                                     isOn: $soundEnabled
                                 )
                                 
                                 SettingsToggleRow(
-                                    title: "Haptic Feedback",
-                                    subtitle: "Vibration for interactions",
+                                    title: "触覚フィードバック",
+                                    subtitle: "操作時にバイブレーション",
                                     icon: "iphone.radiowaves.left.and.right",
                                     isOn: $hapticFeedback
                                 )
                             }
                             
                             // Data & Privacy Section
-                            SettingsSection(title: "📊 Data & Privacy", icon: "shield.fill") {
+                            SettingsSection(title: "📊 データとプライバシー", icon: "shield.fill") {
                                 SettingsRow(
-                                    title: "Export Data",
-                                    subtitle: "Download your progress",
+                                    title: "データをエクスポート",
+                                    subtitle: "習慣や統計をダウンロード",
                                     icon: "square.and.arrow.up.fill",
                                     action: { showDataExportSheet = true }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Privacy Policy",
-                                    subtitle: "How we protect your data",
+                                    title: "プライバシーポリシー",
+                                    subtitle: "データの扱いについて",
                                     icon: "hand.raised.fill",
                                     action: { /* Open privacy policy */ }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Delete All Data",
-                                    subtitle: "Permanently remove your progress",
+                                    title: "すべてのデータを削除",
+                                    subtitle: "習慣や進捗を完全に消去",
                                     icon: "trash.fill",
                                     textColor: .red,
                                     action: { showDeleteConfirmation = true }
@@ -160,48 +160,48 @@ struct SettingsView: View {
                             }
                             
                             // About Section
-                            SettingsSection(title: "ℹ️ About", icon: "info.circle.fill") {
+                            SettingsSection(title: "ℹ️ アプリ情報", icon: "info.circle.fill") {
                                 SettingsRow(
-                                    title: "Version",
+                                    title: "バージョン",
                                     subtitle: "1.0.0",
                                     icon: "app.badge.fill",
                                     action: { }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Environmental Impact",
-                                    subtitle: "Learn about our mission",
+                                    title: "環境への貢献について",
+                                    subtitle: "私たちのミッションを見る",
                                     icon: "globe.americas.fill",
                                     action: { /* Open impact info */ }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Rate on App Store",
-                                    subtitle: "Help us grow sustainably",
+                                    title: "App Storeで評価",
+                                    subtitle: "応援していただけると嬉しいです",
                                     icon: "star.fill",
                                     action: { /* Open App Store */ }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Contact Support",
-                                    subtitle: "We're here to help",
+                                    title: "サポートに連絡",
+                                    subtitle: "ご不明点はお気軽に",
                                     icon: "envelope.fill",
                                     action: { /* Open email */ }
                                 )
                             }
                             
                             // Account Section
-                            SettingsSection(title: "👤 Account", icon: "person.fill") {
+                            SettingsSection(title: "👤 アカウント", icon: "person.fill") {
                                 SettingsRow(
-                                    title: "Account Settings",
-                                    subtitle: "Manage your profile",
+                                    title: "アカウント設定",
+                                    subtitle: "プロフィールを管理",
                                     icon: "person.circle.fill",
                                     action: { showAccountView = true }
                                 )
                                 
                                 SettingsRow(
-                                    title: "Sign Out",
-                                    subtitle: "We'll miss you!",
+                                    title: "サインアウト",
+                                    subtitle: "またお会いできる日を楽しみにしています！",
                                     icon: "rectangle.portrait.and.arrow.right.fill",
                                     textColor: .red,
                                     action: { authManager.isLoggedIn = false }
@@ -223,13 +223,13 @@ struct SettingsView: View {
             .sheet(isPresented: $showDataExportSheet) {
                 DataExportView()
             }
-            .confirmationDialog("Delete All Data", isPresented: $showDeleteConfirmation) {
-                Button("Delete Everything", role: .destructive) {
+            .confirmationDialog("すべてのデータを削除", isPresented: $showDeleteConfirmation) {
+                Button("完全に削除", role: .destructive) {
                     deleteAllData()
                 }
-                Button("Cancel", role: .cancel) { }
+                Button("キャンセル", role: .cancel) { }
             } message: {
-                Text("This will permanently delete all your habits, progress, and journal entries. This action cannot be undone.")
+                Text("習慣、進捗、日記をすべて完全に削除します。この操作は元に戻せません。")
             }
         }
     }
@@ -368,11 +368,11 @@ struct AccountView: View {
                         .font(.system(size: 80))
                         .foregroundColor(.green)
                     
-                    Text("Eco Warrior")
+                    Text("エコウォリアー")
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    Text("Growing a sustainable future")
+                    Text("持続可能な未来を育てる")
                         .font(.body)
                         .foregroundColor(.secondary)
                 }
@@ -381,13 +381,13 @@ struct AccountView: View {
                 // Account Stats
                 VStack(spacing: 16) {
                     HStack {
-                        AccountStatCard(title: "Days Active", value: "47", icon: "calendar.circle.fill")
-                        AccountStatCard(title: "Trees Grown", value: "23", icon: "tree.circle.fill")
+                        AccountStatCard(title: "稼働日数", value: "47", icon: "calendar.circle.fill")
+                        AccountStatCard(title: "育った木の数", value: "23", icon: "tree.circle.fill")
                     }
                     
                     HStack {
-                        AccountStatCard(title: "CO₂ Saved", value: "156kg", icon: "leaf.circle.fill")
-                        AccountStatCard(title: "Streak Record", value: "12", icon: "flame.circle.fill")
+                        AccountStatCard(title: "削減したCO₂", value: "156kg", icon: "leaf.circle.fill")
+                        AccountStatCard(title: "最高ストリーク", value: "12", icon: "flame.circle.fill")
                     }
                 }
                 .padding(.horizontal)
@@ -396,12 +396,12 @@ struct AccountView: View {
                 
                 // Action Buttons
                 VStack(spacing: 12) {
-                    Button("Edit Profile") {
+                    Button("プロフィール編集") {
                         // Edit profile action
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     
-                    Button("Change Password") {
+                    Button("パスワードを変更") {
                         // Change password action
                     }
                     .buttonStyle(SecondaryButtonStyle())
@@ -409,11 +409,11 @@ struct AccountView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 32)
             }
-            .navigationTitle("Account")
+            .navigationTitle("アカウント")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("完了") {
                         dismiss()
                     }
                 }
@@ -458,12 +458,12 @@ struct DataExportView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 24) {
-                Text("📊 Export Your Data")
+                Text("📊 データをエクスポート")
                     .font(.title)
                     .fontWeight(.semibold)
                     .padding(.top, 32)
                 
-                Text("Download your habit tracking data and environmental impact statistics.")
+                Text("習慣のトラッキングデータや環境への影響の統計をダウンロードできます。")
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -471,26 +471,26 @@ struct DataExportView: View {
                 
                 VStack(spacing: 16) {
                     ExportOption(
-                        title: "Habit Progress",
-                        description: "All your habit completions and streaks",
+                        title: "習慣の進捗",
+                        description: "習慣の完了とストリークのデータ",
                         format: "CSV"
                     )
                     
                     ExportOption(
-                        title: "Environmental Impact",
-                        description: "CO₂, water, and waste savings data",
+                        title: "環境への影響",
+                        description: "CO₂、節水、ごみ削減のデータ",
                         format: "PDF"
                     )
                     
                     ExportOption(
-                        title: "Journal Entries",
-                        description: "Your reflection and mood data",
+                        title: "日記エントリ",
+                        description: "あなたの振り返りと気分データ",
                         format: "JSON"
                     )
                     
                     ExportOption(
-                        title: "Complete Data",
-                        description: "Everything in one package",
+                        title: "全データ",
+                        description: "すべてをまとめてダウンロード",
                         format: "ZIP"
                     )
                 }
@@ -498,7 +498,7 @@ struct DataExportView: View {
                 
                 Spacer()
                 
-                Button("Export All Data") {
+                Button("すべてのデータをエクスポート") {
                     // Export functionality
                     dismiss()
                 }
@@ -506,11 +506,11 @@ struct DataExportView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 32)
             }
-            .navigationTitle("Export Data")
+            .navigationTitle("データをエクスポート")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
+                    Button("キャンセル") {
                         dismiss()
                     }
                 }
@@ -607,3 +607,4 @@ struct SettingsView_Previews: PreviewProvider {
             .environmentObject(AuthManager())
     }
 }
+

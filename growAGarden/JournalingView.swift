@@ -33,10 +33,10 @@ struct JournalingView: View {
                     VStack(alignment: .leading, spacing: 22) {
                         // Header
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("🌱 Dear Journal")
+                            Text("🌱 親愛なる日記へ")
                                 .font(.system(size: 32, weight: .bold, design: .rounded))
 
-                            Text("Reflect, write, and grow a little each day.")
+                            Text("毎日ふりかえり、書いて、少しずつ成長しよう")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.secondary)
                         }
@@ -45,7 +45,7 @@ struct JournalingView: View {
                         // ----------------------
                         // Emoji Picker
                         // ----------------------
-                        sectionCard(title: "How are you feeling?") {
+                        sectionCard(title: "今の気分は？") {
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 6), spacing: 12) {
                                 ForEach(availableEmojis, id: \.self) { emoji in
                                     Button(action: { toggleEmoji(emoji) }) {
@@ -68,7 +68,7 @@ struct JournalingView: View {
                         // ----------------------
                         // Journal Entry
                         // ----------------------
-                        sectionCard(title: "Today's Entry") {
+                        sectionCard(title: "今日の記録") {
                             VStack(spacing: 12) {
                                 TextEditor(text: $currentJournalText)
                                     .frame(height: 150)
@@ -80,7 +80,7 @@ struct JournalingView: View {
                                 Button(action: saveJournalEntry) {
                                     HStack {
                                         Image(systemName: "square.and.arrow.down")
-                                        Text("Save Entry")
+                                        Text("記録を保存")
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -94,7 +94,7 @@ struct JournalingView: View {
                         // Past Entries
                         // ----------------------
                         if !journalEntries.isEmpty {
-                            sectionCard(title: "Past Entries") {
+                            sectionCard(title: "これまでの記録") {
                                 VStack(spacing: 14) {
                                     ForEach(journalEntries.sorted(by: { $0.date > $1.date })) { entry in
                                         VStack(alignment: .leading, spacing: 6) {
@@ -124,7 +124,7 @@ struct JournalingView: View {
                                 }
                             }
                         } else {
-                            Text("No past entries yet. Start journaling!")
+                            Text("まだ記録がありません。今日から始めてみましょう！")
                                 .foregroundColor(.secondary)
                                 .padding()
                                 .frame(maxWidth: .infinity)
@@ -133,7 +133,7 @@ struct JournalingView: View {
                     .padding(.top)
                 }
             }
-            .navigationTitle("Habit Grove")
+            .navigationTitle("ハビットグローブ")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear(perform: loadJournalEntries)
         }
