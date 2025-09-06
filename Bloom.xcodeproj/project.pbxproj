@@ -60,14 +60,14 @@
 		3308BE6E2E66DD32003E5B3E /* growAGarden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = growAGarden.entitlements; sourceTree = "<group>"; };
 		3308BE7E2E66EBAB003E5B3E /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		3308BE802E670F2F003E5B3E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		33DB891B2E262E6400DC1C15 /* growAGarden.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = growAGarden.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		33DB891B2E262E6400DC1C15 /* Bloom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bloom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB891E2E262E6400DC1C15 /* growAGardenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenApp.swift; sourceTree = "<group>"; };
 		33DB89202E262E6400DC1C15 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		33DB89222E262E6400DC1C15 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		33DB89242E262E6800DC1C15 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		33DB892D2E262E6800DC1C15 /* growAGardenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = growAGardenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		33DB892D2E262E6800DC1C15 /* BloomTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BloomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB89312E262E6800DC1C15 /* growAGardenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenTests.swift; sourceTree = "<group>"; };
-		33DB89372E262E6800DC1C15 /* growAGardenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = growAGardenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		33DB89372E262E6800DC1C15 /* BloomUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BloomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DB893B2E262E6800DC1C15 /* growAGardenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenUITests.swift; sourceTree = "<group>"; };
 		33DB893D2E262E6800DC1C15 /* growAGardenUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = growAGardenUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		33DB89502E26473300DC1C15 /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
@@ -129,9 +129,9 @@
 		33DB891C2E262E6400DC1C15 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				33DB891B2E262E6400DC1C15 /* growAGarden.app */,
-				33DB892D2E262E6800DC1C15 /* growAGardenTests.xctest */,
-				33DB89372E262E6800DC1C15 /* growAGardenUITests.xctest */,
+				33DB891B2E262E6400DC1C15 /* Bloom.app */,
+				33DB892D2E262E6800DC1C15 /* BloomTests.xctest */,
+				33DB89372E262E6800DC1C15 /* BloomUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -180,9 +180,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		33DB891A2E262E6400DC1C15 /* growAGarden */ = {
+		33DB891A2E262E6400DC1C15 /* Bloom */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33DB89412E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "growAGarden" */;
+			buildConfigurationList = 33DB89412E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "Bloom" */;
 			buildPhases = (
 				33DB89172E262E6400DC1C15 /* Sources */,
 				33DB89182E262E6400DC1C15 /* Frameworks */,
@@ -192,7 +192,7 @@
 			);
 			dependencies = (
 			);
-			name = growAGarden;
+			name = Bloom;
 			packageProductDependencies = (
 				3308BE712E66E4D5003E5B3E /* Auth */,
 				3308BE732E66E4D5003E5B3E /* Functions */,
@@ -202,12 +202,12 @@
 				3308BE7C2E66E553003E5B3E /* Supabase */,
 			);
 			productName = growAGarden;
-			productReference = 33DB891B2E262E6400DC1C15 /* growAGarden.app */;
+			productReference = 33DB891B2E262E6400DC1C15 /* Bloom.app */;
 			productType = "com.apple.product-type.application";
 		};
-		33DB892C2E262E6800DC1C15 /* growAGardenTests */ = {
+		33DB892C2E262E6800DC1C15 /* BloomTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33DB89442E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "growAGardenTests" */;
+			buildConfigurationList = 33DB89442E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "BloomTests" */;
 			buildPhases = (
 				33DB89292E262E6800DC1C15 /* Sources */,
 				33DB892A2E262E6800DC1C15 /* Frameworks */,
@@ -218,14 +218,14 @@
 			dependencies = (
 				33DB892F2E262E6800DC1C15 /* PBXTargetDependency */,
 			);
-			name = growAGardenTests;
+			name = BloomTests;
 			productName = growAGardenTests;
-			productReference = 33DB892D2E262E6800DC1C15 /* growAGardenTests.xctest */;
+			productReference = 33DB892D2E262E6800DC1C15 /* BloomTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		33DB89362E262E6800DC1C15 /* growAGardenUITests */ = {
+		33DB89362E262E6800DC1C15 /* BloomUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33DB89472E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "growAGardenUITests" */;
+			buildConfigurationList = 33DB89472E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "BloomUITests" */;
 			buildPhases = (
 				33DB89332E262E6800DC1C15 /* Sources */,
 				33DB89342E262E6800DC1C15 /* Frameworks */,
@@ -236,9 +236,9 @@
 			dependencies = (
 				33DB89392E262E6800DC1C15 /* PBXTargetDependency */,
 			);
-			name = growAGardenUITests;
+			name = BloomUITests;
 			productName = growAGardenUITests;
-			productReference = 33DB89372E262E6800DC1C15 /* growAGardenUITests.xctest */;
+			productReference = 33DB89372E262E6800DC1C15 /* BloomUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -264,7 +264,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 33DB89162E262E6400DC1C15 /* Build configuration list for PBXProject "growAGarden" */;
+			buildConfigurationList = 33DB89162E262E6400DC1C15 /* Build configuration list for PBXProject "Bloom" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -280,9 +280,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				33DB891A2E262E6400DC1C15 /* growAGarden */,
-				33DB892C2E262E6800DC1C15 /* growAGardenTests */,
-				33DB89362E262E6800DC1C15 /* growAGardenUITests */,
+				33DB891A2E262E6400DC1C15 /* Bloom */,
+				33DB892C2E262E6800DC1C15 /* BloomTests */,
+				33DB89362E262E6800DC1C15 /* BloomUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -357,12 +357,12 @@
 /* Begin PBXTargetDependency section */
 		33DB892F2E262E6800DC1C15 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 33DB891A2E262E6400DC1C15 /* growAGarden */;
+			target = 33DB891A2E262E6400DC1C15 /* Bloom */;
 			targetProxy = 33DB892E2E262E6800DC1C15 /* PBXContainerItemProxy */;
 		};
 		33DB89392E262E6800DC1C15 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 33DB891A2E262E6400DC1C15 /* growAGarden */;
+			target = 33DB891A2E262E6400DC1C15 /* Bloom */;
 			targetProxy = 33DB89382E262E6800DC1C15 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -560,7 +560,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/growAGarden.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/growAGarden";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bloom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bloom";
 			};
 			name = Debug;
 		};
@@ -579,7 +579,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/growAGarden.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/growAGarden";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bloom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bloom";
 			};
 			name = Release;
 		};
@@ -620,7 +620,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		33DB89162E262E6400DC1C15 /* Build configuration list for PBXProject "growAGarden" */ = {
+		33DB89162E262E6400DC1C15 /* Build configuration list for PBXProject "Bloom" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33DB893F2E262E6800DC1C15 /* Debug */,
@@ -629,7 +629,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33DB89412E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "growAGarden" */ = {
+		33DB89412E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "Bloom" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33DB89422E262E6800DC1C15 /* Debug */,
@@ -638,7 +638,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33DB89442E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "growAGardenTests" */ = {
+		33DB89442E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "BloomTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33DB89452E262E6800DC1C15 /* Debug */,
@@ -647,7 +647,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33DB89472E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "growAGardenUITests" */ = {
+		33DB89472E262E6800DC1C15 /* Build configuration list for PBXNativeTarget "BloomUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33DB89482E262E6800DC1C15 /* Debug */,
