@@ -1,11 +1,9 @@
 import SwiftUI
 
 // MARK: - Plant Model
-
 enum PlantState: String, Codable {
     case seed, sprout, wilt
 }
-
 struct Plant: Identifiable, Equatable {
     let id = UUID()
     let habit: String
@@ -14,21 +12,17 @@ struct Plant: Identifiable, Equatable {
     var position: GridPosition
     var lastCheckInDate: Date? = nil
 }
-
 struct GridPosition: Hashable {
     let row: Int
     let col: Int
 }
-
 enum TabSelection: String, CaseIterable, Identifiable {
     case journaling = "Journaling"
     case home = "Home"
     case stats = "Stats"
     case volunteer = "Volunteer"
     case settings = "Settings"
-
     var id: String { self.rawValue }
-
     var systemImage: String {
         switch self {
         case .journaling: return "book.closed"
@@ -43,7 +37,6 @@ enum TabSelection: String, CaseIterable, Identifiable {
 // MARK: - Time of Day
 enum TimeOfDay {
     case morning, afternoon, evening, night
-
     var skyGradient: [Color] {
         switch self {
         case .morning:
@@ -66,7 +59,6 @@ struct FloatingParticle: Identifiable {
     let size: CGFloat
     var opacity: Double = 0.6
     let duration: Double
-
     init(position: CGPoint) {
         self.position = position
         self.color = [Color.white, Color.yellow, Color.green.opacity(0.8)].randomElement() ?? .white
@@ -76,15 +68,12 @@ struct FloatingParticle: Identifiable {
 }
 
 // MARK: - Main View
-
 struct NextPageView: View {
     @State private var plants: [Plant]
     @State private var selectedPlant: Plant?
     @State private var selectedTab: TabSelection = .home
     @State private var timeOfDay: TimeOfDay = .morning
-
     let gridSize = 4
-
     init(habits: [String]) {
         _plants = State(initialValue: habits.enumerated().map { index, habit in
             let row = index / 4
@@ -92,38 +81,33 @@ struct NextPageView: View {
             return Plant(habit: habit, position: GridPosition(row: row, col: col))
         })
     }
-
     var body: some View {
         NavigationStack {
             TabView(selection: $selectedTab) {
                 JournalingView()
                     .tag(TabSelection.journaling)
                     .tabItem {
-                        Label(TabSelection.journaling.rawValue, systemImage: TabSelection.journaling.systemImage)
+                        Label("日記", systemImage: TabSelection.journaling.systemImage)
                     }
-
                 EnhancedForestGridView(plants: $plants, selectedPlant: $selectedPlant, timeOfDay: timeOfDay)
                     .tag(TabSelection.home)
                     .tabItem {
-                        Label(TabSelection.home.rawValue, systemImage: TabSelection.home.systemImage)
+                        Label("ホーム", systemImage: TabSelection.home.systemImage)
                     }
-
                 StatsView()
                     .tag(TabSelection.stats)
                     .tabItem {
-                        Label(TabSelection.stats.rawValue, systemImage: TabSelection.stats.systemImage)
+                        Label("統計", systemImage: TabSelection.stats.systemImage)
                     }
-
                 VolunteerView()
                     .tag(TabSelection.volunteer)
                     .tabItem {
-                        Label(TabSelection.volunteer.rawValue, systemImage: TabSelection.volunteer.systemImage)
+                        Label("ボランティア", systemImage: TabSelection.volunteer.systemImage)
                     }
-
                 SettingsView()
                     .tag(TabSelection.settings)
                     .tabItem {
-                        Label(TabSelection.settings.rawValue, systemImage: TabSelection.settings.systemImage)
+                        Label("設定", systemImage: TabSelection.settings.systemImage)
                     }
             }
             .accentColor(.green)
@@ -136,7 +120,6 @@ struct NextPageView: View {
             .navigationBarBackButtonHidden(true)
         }
     }
-
     private func updateTimeOfDay() {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
@@ -153,23 +136,19 @@ struct EnhancedForestGridView: View {
     @Binding var plants: [Plant]
     @Binding var selectedPlant: Plant?
     let timeOfDay: TimeOfDay
-
     @State private var floatingParticles: [FloatingParticle] = []
     @State private var animationTimer: Timer?
     @State private var cloudOffset1: CGFloat = -100
     @State private var cloudOffset2: CGFloat = -150
-
     var body: some View {
         GeometryReader { _ in
             ZStack {
                 // Dynamic sky background
                 LinearGradient(
                     gradient: Gradient(colors: timeOfDay.skyGradient),
-                    startPoint: .top,
-                    endPoint: .bottom
+                    startPoint: .top, endPoint: .bottom
                 )
                 .ignoresSafeArea()
-
                 // Animated clouds
                 ZStack {
                     // Cloud 1
@@ -181,7 +160,6 @@ struct EnhancedForestGridView: View {
                         }
                     }
                     .offset(x: cloudOffset1, y: 50)
-
                     // Cloud 2
                     HStack {
                         ForEach(0..<4, id: \.self) { _ in
@@ -192,7 +170,6 @@ struct EnhancedForestGridView: View {
                     }
                     .offset(x: cloudOffset2, y: 100)
                 }
-
                 // Animated floating particles
                 ForEach(floatingParticles, id: \.id) { particle in
                     Circle()
@@ -202,7 +179,6 @@ struct EnhancedForestGridView: View {
                         .opacity(particle.opacity)
                         .animation(.linear(duration: particle.duration), value: particle.position)
                 }
-
                 ScrollView {
                     VStack(spacing: 25) {
                         // Header
@@ -213,11 +189,9 @@ struct EnhancedForestGridView: View {
                                         .foregroundColor(.green)
                                         .font(.title3)
                                 }
-
-                                Text("Your Forest")
+                                Text("あなたの森")
                                     .font(.system(size: 32, weight: .bold, design: .rounded))
                                     .foregroundColor(.primary)
-
                                 ForEach(0..<3, id: \.self) { _ in
                                     Image(systemName: "leaf.fill")
                                         .foregroundColor(.green)
@@ -225,10 +199,9 @@ struct EnhancedForestGridView: View {
                                         .scaleEffect(x: -1)
                                 }
                             }
-
                             // Progress indicator
                             ProgressView(value: completionRate) {
-                                Text("Forest Health: \(Int(completionRate * 100))%")
+                                Text("森の健康: \(Int(completionRate * 100))%")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                             }
@@ -237,14 +210,12 @@ struct EnhancedForestGridView: View {
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
-
                         // Plant grid
                         LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 12), count: 4), spacing: 16) {
                             ForEach(0..<(4 * 4), id: \.self) { index in
                                 let row = index / 4
                                 let col = index % 4
                                 let pos = GridPosition(row: row, col: col)
-
                                 if let plant = plants.first(where: { $0.position == pos }) {
                                     EnhancedPlantView(plant: plant)
                                         .onTapGesture {
@@ -259,15 +230,13 @@ struct EnhancedForestGridView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.bottom, 40)
-
                         // Footer
                         if completionRate > 0.7 {
                             VStack(spacing: 8) {
-                                Text("🌟 Your forest is thriving! 🌟")
+                                Text("🌟 あなたの森は元気です！🌟")
                                     .font(.headline)
                                     .foregroundColor(.primary)
-
-                                Text("Keep up the amazing work!")
+                                Text("素晴らしい努力を続けましょう！")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
@@ -286,26 +255,20 @@ struct EnhancedForestGridView: View {
                 }
             }
         }
-        .onAppear {
-            startParticleAnimation()
-            animateClouds()
-        }
-        .onDisappear {
-            stopParticleAnimation()
-        }
+        .onAppear { startParticleAnimation(); animateClouds() }
+        .onDisappear { stopParticleAnimation() }
     }
-
     private var completionRate: Double {
-        guard !plants.isEmpty else { return 0 }
+        guard !plants.isEmpty else {
+            return 0
+        }
         let healthyPlants = plants.filter { $0.state != .wilt }.count
         return Double(healthyPlants) / Double(plants.count)
     }
-
     private func hasCheckedInToday(plant: Plant) -> Bool {
         guard let last = plant.lastCheckInDate else { return false }
         return Calendar.current.isDateInToday(last)
     }
-
     // MARK: - Particle Animation
     private func startParticleAnimation() {
         animationTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { _ in
@@ -313,24 +276,19 @@ struct EnhancedForestGridView: View {
         }
         for _ in 0..<3 { addFloatingParticle() }
     }
-
     private func stopParticleAnimation() {
         animationTimer?.invalidate()
     }
-
     private func addFloatingParticle() {
         let screenWidth = UIScreen.main.bounds.width
         let screenHeight = UIScreen.main.bounds.height
-
         let particle = FloatingParticle(
             position: CGPoint(
                 x: CGFloat.random(in: 0...screenWidth),
                 y: screenHeight + 20
             )
         )
-
         floatingParticles.append(particle)
-
         // Animate particle upward
         withAnimation(.linear(duration: particle.duration)) {
             if let index = floatingParticles.firstIndex(where: { $0.id == particle.id }) {
@@ -338,18 +296,15 @@ struct EnhancedForestGridView: View {
                 floatingParticles[index].opacity = 0
             }
         }
-
         // Remove particle after animation
         DispatchQueue.main.asyncAfter(deadline: .now() + particle.duration) {
             floatingParticles.removeAll { $0.id == particle.id }
         }
     }
-
     private func animateClouds() {
         withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
             cloudOffset1 = UIScreen.main.bounds.width + 100
         }
-
         withAnimation(Animation.linear(duration: 25).repeatForever(autoreverses: false)) {
             cloudOffset2 = UIScreen.main.bounds.width + 150
         }
@@ -362,7 +317,6 @@ struct EnhancedPlantView: View {
     @State private var isGlowing = false
     @State private var bobOffset: CGFloat = 0
     @State private var sparkleOpacity: Double = 0
-
     var body: some View {
         ZStack {
             // Tile background with subtle pattern
@@ -373,9 +327,7 @@ struct EnhancedPlantView: View {
                             Color(red: 0.3, green: 0.7, blue: 0.3).opacity(0.3),
                             Color(red: 0.2, green: 0.5, blue: 0.2).opacity(0.5)
                         ],
-                        center: .center,
-                        startRadius: 20,
-                        endRadius: 60
+                        center: .center, startRadius: 20, endRadius: 60
                     )
                 )
                 .frame(width: 80, height: 80)
@@ -384,13 +336,11 @@ struct EnhancedPlantView: View {
                         .stroke(
                             LinearGradient(
                                 colors: [Color.green.opacity(0.3), Color.mint.opacity(0.5)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                                startPoint: .topLeading, endPoint: .bottomTrailing
                             ),
                             lineWidth: 2
                         )
                 )
-
             VStack(spacing: 2) {
                 // Interaction indicator
                 if !hasCheckedInToday() {
@@ -400,7 +350,6 @@ struct EnhancedPlantView: View {
                         .offset(y: bobOffset)
                         .opacity(0.8)
                 }
-
                 // Plant visualization
                 ZStack {
                     if plant.state == .wilt {
@@ -432,7 +381,6 @@ struct EnhancedPlantView: View {
                                     value: sparkleOpacity
                                 )
                             }
-
                             // Main plant image
                             Image(imageNameForGrowth(plant))
                                 .resizable()
@@ -442,7 +390,6 @@ struct EnhancedPlantView: View {
                                 .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: isGlowing)
                         }
                     }
-
                     // Check-in overlay
                     if hasCheckedInToday() {
                         ZStack {
@@ -453,7 +400,6 @@ struct EnhancedPlantView: View {
                                     Circle()
                                         .stroke(Color.white, lineWidth: 2)
                                 )
-
                             Image(systemName: "checkmark")
                                 .foregroundColor(.white)
                                 .font(.system(size: 12, weight: .bold))
@@ -462,7 +408,6 @@ struct EnhancedPlantView: View {
                         .shadow(color: .green.opacity(0.5), radius: 4)
                     }
                 }
-
                 // Habit name
                 Text(plant.habit)
                     .font(.system(size: 10, weight: .medium, design: .rounded))
@@ -475,22 +420,14 @@ struct EnhancedPlantView: View {
         .frame(width: 80, height: 80)
         .onAppear { startAnimations() }
     }
-
     private func hasCheckedInToday() -> Bool {
         guard let last = plant.lastCheckInDate else { return false }
         return Calendar.current.isDateInToday(last)
     }
-
     private func startAnimations() {
-        withAnimation {
-            isGlowing = true
-            sparkleOpacity = 1.0
-        }
-        withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
-            bobOffset = -3
-        }
+        withAnimation { isGlowing = true; sparkleOpacity = 1.0 }
+        withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) { bobOffset = -3 }
     }
-
     // Fixed: make switch exhaustive with a default
     private func plantSize(_ plant: Plant) -> CGFloat {
         switch (plant.state, plant.growthLevel) {
@@ -502,7 +439,6 @@ struct EnhancedPlantView: View {
         default: return 28 // safety for unexpected values (e.g., negative growthLevel)
         }
     }
-
     private func imageNameForGrowth(_ plant: Plant) -> String {
         switch (plant.state, plant.growthLevel) {
         case (.seed, _): return "tree_1"
@@ -517,7 +453,6 @@ struct EnhancedPlantView: View {
 // MARK: - Empty Grass Tile
 struct EmptyGrassTile: View {
     @State private var grassSway: Double = 0
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -527,12 +462,10 @@ struct EmptyGrassTile: View {
                             Color.green.opacity(0.2),
                             Color.green.opacity(0.4)
                         ],
-                        startPoint: .top,
-                        endPoint: .bottom
+                        startPoint: .top, endPoint: .bottom
                     )
                 )
                 .frame(width: 80, height: 80)
-
             // Subtle grass pattern
             VStack {
                 Spacer()
@@ -546,16 +479,13 @@ struct EmptyGrassTile: View {
                 }
                 .padding(.bottom, 8)
             }
-
             // Soft inner glow
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.green.opacity(0.3), lineWidth: 1)
                 .frame(width: 80, height: 80)
         }
         .onAppear {
-            withAnimation(Animation.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
-                grassSway = 5
-            }
+            withAnimation(Animation.easeInOut(duration: 3).repeatForever(autoreverses: true)) { grassSway = 5 }
         }
     }
 }
@@ -564,10 +494,8 @@ struct EmptyGrassTile: View {
 struct HabitCheckInView: View {
     @Binding var plant: Plant
     @Environment(\.dismiss) var dismiss
-    
     @ObservedObject private var impactStore = ImpactStore.shared
     private let calc = ImpactCalculator()
-    
     // UI State for inputs
     @State private var km: Double = 2.0
     @State private var hours: Double = 1.0
@@ -576,11 +504,7 @@ struct HabitCheckInView: View {
     @State private var loads: Int = 1
     @State private var countUnknown: Int = 1
     @State private var showConfetti = false
-    
-    private var kind: HabitKind {
-        calc.kind(for: plant.habit)
-    }
-    
+    private var kind: HabitKind { calc.kind(for: plant.habit) }
     var body: some View {
         ZStack {
             LinearGradient(
@@ -588,30 +512,24 @@ struct HabitCheckInView: View {
                     Color(red: 0.9, green: 0.95, blue: 1.0),
                     Color(red: 0.8, green: 0.9, blue: 0.95)
                 ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+                startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-            
             VStack(spacing: 22) {
                 Spacer(minLength: 8)
-                
                 // Title + plant
                 VStack(spacing: 10) {
                     Text(plant.habit)
                         .font(.system(size: 22, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
-                    
                     Image(imageNameForGrowth(plant))
                         .resizable()
                         .frame(width: 64, height: 64)
                         .shadow(radius: 4)
                 }
-                
                 // Dynamic input form
                 inputForm
-                
                 // Buttons
                 HStack(spacing: 18) {
                     Button(role: .cancel) {
@@ -619,44 +537,35 @@ struct HabitCheckInView: View {
                         plant.lastCheckInDate = Date()
                         dismiss()
                     } label: {
-                        labelBox(icon: "xmark.circle.fill", title: "Not yet", colors: [.gray, .secondary])
+                        labelBox(icon: "xmark.circle.fill", title: "まだ", colors: [.gray, .secondary])
                     }
-                    
                     Button {
                         // Update growth
                         plant.state = .sprout
                         plant.growthLevel += 1
                         plant.lastCheckInDate = Date()
-                        
                         // Log impact
                         logImpact()
-                        
                         showConfetti = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                            dismiss()
-                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { dismiss() }
                     } label: {
-                        labelBox(icon: "checkmark.circle.fill", title: "Save", colors: [.green, .mint])
+                        labelBox(icon: "checkmark.circle.fill", title: "保存", colors: [.green, .mint])
                     }
                 }
                 .padding(.top, 4)
-                
                 Spacer(minLength: 8)
             }
             .padding()
-            
             if showConfetti { ConfettiView() }
         }
     }
-    
-    @ViewBuilder
-    private var inputForm: some View {
+    @ViewBuilder private var inputForm: some View {
         switch kind {
         case .bike:
             formCard {
                 HStack {
                     Image(systemName: "bicycle")
-                    Text("How many km did you bike / take public transport?")
+                    Text("何km自転車/公共交通を利用しましたか？")
                     Spacer()
                 }
                 Stepper(value: $km, in: 0...200, step: 0.5) {
@@ -667,65 +576,63 @@ struct HabitCheckInView: View {
             formCard {
                 HStack {
                     Image(systemName: "thermometer.sun")
-                    Text(String(format: "AC at %.1f°C — for how many hours today?", setpoint))
+                    Text(String(format: "エアコン%.1f°C・本日の使用時間", setpoint))
                     Spacer()
                 }
                 Stepper(value: $hours, in: 0...24, step: 0.5) {
-                    Text(String(format: "%.1f h", hours))
+                    Text(String(format: "%.1f 時間", hours))
                 }
             }
         case .bottle:
             formCard {
                 HStack {
                     Image(systemName: "bottle.fill")
-                    Text("Disposable bottles avoided today")
+                    Text("使い捨てボトルを減らした数")
                     Spacer()
                 }
                 Stepper(value: $bottles, in: 0...100) {
-                    Text("\(bottles) bottle(s)")
+                    Text("\(bottles) 本")
                 }
             }
         case .lunch:
             formCard {
                 HStack {
                     Image(systemName: "fork.knife")
-                    Text("Meals brought from home today")
+                    Text("お弁当を持参した食数")
                     Spacer()
                 }
                 Stepper(value: $meals, in: 0...10) {
-                    Text("\(meals) meal(s)")
+                    Text("\(meals) 食")
                 }
             }
         case .hangDry:
             formCard {
                 HStack {
                     Image(systemName: "wind")
-                    Text("Loads hang-dried today")
+                    Text("部屋干しした回数")
                     Spacer()
                 }
                 Stepper(value: $loads, in: 0...10) {
-                    Text("\(loads) load(s)")
+                    Text("\(loads) 回")
                 }
             }
         case .unknown:
             formCard {
                 HStack {
                     Image(systemName: "checkmark.circle")
-                    Text("Times completed today")
+                    Text("今日達成した回数")
                     Spacer()
                 }
                 Stepper(value: $countUnknown, in: 1...20) {
-                    Text("\(countUnknown) time(s)")
+                    Text("\(countUnknown) 回")
                 }
-                Text("This habit doesn’t have a calculator yet, but your streak will grow!")
+                Text("この習慣にはまだ計算機がありませんが、連続記録が成長します！")
                     .font(.footnote)
                     .foregroundColor(.secondary)
             }
         }
     }
-    
-    @ViewBuilder
-    private func formCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+    @ViewBuilder private func formCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 12, content: content)
             .padding(16)
             .background(
@@ -734,7 +641,6 @@ struct HabitCheckInView: View {
             )
             .padding(.horizontal)
     }
-    
     private func labelBox(icon: String, title: String, colors: [Color]) -> some View {
         VStack(spacing: 8) {
             Image(systemName: icon).font(.system(size: 28))
@@ -746,24 +652,16 @@ struct HabitCheckInView: View {
         .cornerRadius(20)
         .shadow(color: colors.first?.opacity(0.4) ?? .black.opacity(0.3), radius: 8, x: 0, y: 4)
     }
-    
     private func logImpact() {
         switch kind {
-        case .bike:
-            impactStore.logBike(habitName: plant.habit, km: km)
-        case .ac(let setpoint):
-            impactStore.logAC(habitName: plant.habit, setpointC: setpoint, hours: hours)
-        case .bottle:
-            impactStore.logBottle(habitName: plant.habit, count: bottles)
-        case .lunch:
-            impactStore.logLunch(habitName: plant.habit, meals: meals)
-        case .hangDry:
-            impactStore.logHangDry(habitName: plant.habit, loads: loads)
-        case .unknown:
-            impactStore.logUnknown(habitName: plant.habit, count: countUnknown)
+        case .bike: impactStore.logBike(habitName: plant.habit, km: km)
+        case .ac(let setpoint): impactStore.logAC(habitName: plant.habit, setpointC: setpoint, hours: hours)
+        case .bottle: impactStore.logBottle(habitName: plant.habit, count: bottles)
+        case .lunch: impactStore.logLunch(habitName: plant.habit, meals: meals)
+        case .hangDry: impactStore.logHangDry(habitName: plant.habit, loads: loads)
+        case .unknown: impactStore.logUnknown(habitName: plant.habit, count: countUnknown)
         }
     }
-    
     private func imageNameForGrowth(_ plant: Plant) -> String {
         switch (plant.state, plant.growthLevel) {
         case (.seed, _): return "tree_1"
@@ -775,11 +673,9 @@ struct HabitCheckInView: View {
     }
 }
 
-
 // MARK: - Confetti View
 struct ConfettiView: View {
     @State private var animate = false
-
     var body: some View {
         ZStack {
             ForEach(0..<20, id: \.self) { index in
@@ -792,11 +688,11 @@ struct ConfettiView: View {
                     )
                     .animation(
                         Animation.easeOut(duration: Double.random(in: 1...3))
-                            .delay(Double(index) * 0.1),
-                        value: animate
+                            .delay(Double(index) * 0.1), value: animate
                     )
             }
         }
         .onAppear { animate = true }
     }
 }
+
