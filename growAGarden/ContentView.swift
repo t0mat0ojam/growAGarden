@@ -60,172 +60,37 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Eco gradient background
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(.systemGreen).opacity(0.05),
-                        Color(.systemMint).opacity(0.03)
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                ecoBackground
 
                 ScrollView {
                     VStack(spacing: 28) {
-                        // Title
-                        Text("🌿 習慣を選ぼう")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .padding(.top, 20)
-
-                        // Environmental Habits
-                        sectionCard(title: "環境にやさしい習慣") {
-                            VStack(spacing: 14) {
-                                ForEach(ENV_OPTIONS) { opt in
-                                    VStack(alignment: .leading, spacing: 12) {
-                                        Toggle(isOn: Binding(
-                                            get: { selectedEnvIDs.contains(opt.id) },
-                                            set: { on in
-                                                if on { selectedEnvIDs.insert(opt.id) }
-                                                else  { selectedEnvIDs.remove(opt.id) }
-                                            }
-                                        )) {
-                                            Text(opt.title)
-                                                .font(.system(size: 18, weight: .medium, design: .rounded))
-                                        }
-
-                                        if opt.id == "ac", selectedEnvIDs.contains("ac") {
-                                            HStack(spacing: 12) {
-                                                Image(systemName: "thermometer.sun")
-                                                Text("設定温度")
-                                                Spacer()
-                                                Stepper(value: $acTemp, in: 18...30, step: 0.5) {
-                                                    Text(String(format: "%.1f ℃", acTemp))
-                                                        .font(.system(size: 16, weight: .semibold))
-                                                }
-                                            }
-                                            .padding(10)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .fill(Color(.systemGray6).opacity(0.95))
-                                            )
-                                        }
-                                    }
-                                    .padding(12)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                            .fill(Color.white.opacity(0.9))
-                                            .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
-                                    )
-                                }
-                            }
-                        }
-
-                        // Personal Habits
-                        sectionCard(title: "自分の習慣") {
-                            VStack(spacing: 12) {
-                                HStack {
-                                    TextField("習慣を入力…", text: $newPersonalHabit)
-                                        .textInputAutocapitalization(.sentences)
-                                        .disableAutocorrection(false)
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 14)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color(.systemGray6).opacity(0.97))
-                                        )
-
-                                    Button {
-                                        Task { await addPersonalHabit() }
-                                    } label: {
-                                        if isSavingPersonal {
-                                            ProgressView().frame(width: 28, height: 28)
-                                        } else {
-                                            Image(systemName: "plus.circle.fill")
-                                                .font(.system(size: 28))
-                                        }
-                                    }
-                                    .disabled(newPersonalHabit.trimmedOrNil == nil || isSavingPersonal)
-                                    .foregroundColor(Color(.systemMint))
-                                }
-
-                                if personalHabits.isEmpty {
-                                    Text("まだ習慣がありません。上に入力して追加しましょう 👆")
-                                        .foregroundColor(.secondary)
-                                        .font(.footnote)
-                                        .padding(.top, 6)
-                                } else {
-                                    ForEach(personalHabits.indices, id: \.self) { i in
-                                        let h = personalHabits[i]
-                                        HStack {
-                                            Text(h.habit_name)
-                                                .font(.system(size: 18, weight: .medium, design: .rounded))
-                                            Spacer()
-                                            Button {
-                                                Task {
-                                                    await authManager.deleteHabit(h)
-                                                    personalHabits.removeAll {
-                                                        $0.id == h.id || $0.habit_name.lowercased() == h.habit_name.lowercased()
-                                                    }
-                                                }
-                                            } label: {
-                                                Image(systemName: "trash")
-                                                    .foregroundColor(.pink)
-                                            }
-                                        }
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 14)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.9))
-                                        )
-                                        .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
-                                    }
-                                }
-                            }
-                        }
-
-                        // Go Button
-                        Button {
-                            Task {
-                                if let typed = newPersonalHabit.trimmedOrNil {
-                                    let new = DBHabit(id: UUID().uuidString, habit_name: typed)
-                                    if !personalHabits.contains(where: { $0.habit_name.lowercased() == typed.lowercased() }) {
-                                        personalHabits.append(new)
-                                    }
-                                    newPersonalHabit = ""
-                                    await authManager.saveHabit(name: typed)
-                                }
-                                showNextPage = true
-                            }
-                        } label: {
-                            Text("次へ")
-                                .font(.system(size: 20, weight: .semibold, design: .rounded))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                        }
-                        .buttonStyle(PrimaryButtonStyle())
-                        .padding(.horizontal, 40)
-                        .padding(.bottom, 30)
-                        .disabled(!canProceed)
-                        .navigationDestination(isPresented: $showNextPage) {
-                            NextPageView(habits: finalHabitNames)
-                        }
+                        headerTitle
+                        environmentSection
+                        personalSection
+                        goButton
                     }
                     .padding(.horizontal, 18)
                 }
             }
         }
+        // Put the navigation destination on the stack (lighter for the type-checker)
+        .navigationDestination(isPresented: $showNextPage) {
+            NextPageView(habits: finalHabitNames)
+        }
         .task { await initialFetchMerge() }
     }
+}
 
-    // MARK: - Derived data
-    private var canProceed: Bool {
+// MARK: - Derived data
+private extension ContentView {
+    var canProceed: Bool {
         if selectedEnvIDs.isEmpty && personalHabits.isEmpty && newPersonalHabit.trimmedOrNil == nil { return false }
         if selectedEnvIDs.contains("ac") { return (18.0...30.0).contains(acTemp) }
         return true
     }
 
-    private var finalHabitNames: [String] {
+    // broken up so the compiler is fast & predictable
+    var finalHabitNames: [String] {
         let envNames: [String] = ENV_OPTIONS.compactMap { opt in
             guard selectedEnvIDs.contains(opt.id) else { return nil }
             if opt.id == "ac" {
@@ -234,15 +99,176 @@ struct ContentView: View {
                 return opt.title
             }
         }
-        var names = envNames + personalHabits.map { $0.habit_name }
+
+        var names: [String] = envNames + personalHabits.map { $0.habit_name }
         if let typed = newPersonalHabit.trimmedOrNil { names.append(typed) }
+
         var seen = Set<String>()
-        return names.filter { seen.insert($0.lowercased()).inserted }
+        var unique: [String] = []
+        unique.reserveCapacity(names.count)
+        for n in names {
+            let k = n.lowercased()
+            if seen.insert(k).inserted { unique.append(n) }
+        }
+        return unique
+    }
+}
+
+// MARK: - UI pieces (small subviews = faster type checking)
+private extension ContentView {
+    var ecoBackground: some View {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                Color(.systemGreen).opacity(0.05),
+                Color(.systemMint).opacity(0.03)
+            ]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea()
     }
 
-    // MARK: - UI Helpers
+    var headerTitle: some View {
+        Text("🌿 習慣を選ぼう")
+            .font(.system(size: 32, weight: .bold, design: .rounded))
+            .padding(.top, 20)
+    }
+
+    var environmentSection: some View {
+        sectionCard(title: "環境にやさしい習慣") {
+            VStack(spacing: 14) {
+                ForEach(ENV_OPTIONS) { opt in
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle(isOn: Binding(
+                            get: { selectedEnvIDs.contains(opt.id) },
+                            set: { on in
+                                if on { selectedEnvIDs.insert(opt.id) }
+                                else  { selectedEnvIDs.remove(opt.id) }
+                            }
+                        )) {
+                            Text(opt.title)
+                                .font(.system(size: 18, weight: .medium, design: .rounded))
+                        }
+
+                        if opt.id == "ac", selectedEnvIDs.contains("ac") {
+                            HStack(spacing: 12) {
+                                Image(systemName: "thermometer.sun")
+                                Text("設定温度")
+                                Spacer()
+                                Stepper(value: $acTemp, in: 18...30, step: 0.5) {
+                                    Text(String(format: "%.1f ℃", acTemp))
+                                        .font(.system(size: 16, weight: .semibold))
+                                }
+                            }
+                            .padding(10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemGray6).opacity(0.95))
+                            )
+                        }
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.white.opacity(0.9))
+                            .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+                    )
+                }
+            }
+        }
+    }
+
+    var personalSection: some View {
+        sectionCard(title: "自分の習慣") {
+            VStack(spacing: 12) {
+                HStack {
+                    TextField("習慣を入力…", text: $newPersonalHabit)
+                        .textInputAutocapitalization(.sentences)
+                        .disableAutocorrection(false)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.systemGray6).opacity(0.97))
+                        )
+
+                    Button {
+                        Task { await addPersonalHabit() }
+                    } label: {
+                        if isSavingPersonal {
+                            ProgressView().frame(width: 28, height: 28)
+                        } else {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 28))
+                        }
+                    }
+                    .disabled(newPersonalHabit.trimmedOrNil == nil || isSavingPersonal)
+                    .foregroundColor(Color(.systemMint))
+                }
+
+                if personalHabits.isEmpty {
+                    Text("まだ習慣がありません。上に入力して追加しましょう 👆")
+                        .foregroundColor(.secondary)
+                        .font(.footnote)
+                        .padding(.top, 6)
+                } else {
+                    ForEach(personalHabits.indices, id: \.self) { i in
+                        let h = personalHabits[i]
+                        HStack {
+                            Text(h.habit_name)
+                                .font(.system(size: 18, weight: .medium, design: .rounded))
+                            Spacer()
+                            Button {
+                                Task {
+                                    await authManager.deleteHabit(h)
+                                    personalHabits.removeAll {
+                                        $0.id == h.id || $0.habit_name.lowercased() == h.habit_name.lowercased()
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.pink)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.9))
+                        )
+                        .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+                    }
+                }
+            }
+        }
+    }
+
+    var goButton: some View {
+        Button {
+            Task {
+                if let typed = newPersonalHabit.trimmedOrNil {
+                    let new = DBHabit(id: UUID().uuidString, habit_name: typed)
+                    if !personalHabits.contains(where: { $0.habit_name.lowercased() == typed.lowercased() }) {
+                        personalHabits.append(new)
+                    }
+                    newPersonalHabit = ""
+                    await authManager.saveHabit(name: typed)
+                }
+                showNextPage = true
+            }
+        } label: {
+            Text("次へ")
+                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .frame(maxWidth: .infinity)
+                .padding()
+        }
+        .buttonStyle(PrimaryButtonStyle())
+        .padding(.horizontal, 40)
+        .padding(.bottom, 30)
+        .disabled(!canProceed)
+    }
+
     @ViewBuilder
-    private func sectionCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+    func sectionCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(title)
                 .font(.system(size: 22, weight: .semibold, design: .rounded))
@@ -256,19 +282,19 @@ struct ContentView: View {
                 .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
         )
     }
+}
 
-    // MARK: - Data Helpers
+// MARK: - Data Helpers
+private extension ContentView {
     @MainActor
-    private func initialFetchMerge() async {
+    func initialFetchMerge() async {
         guard authManager.isLoggedIn else { return }
         let fetched = await authManager.fetchHabits()
-        if !fetched.isEmpty {
-            personalHabits.mergeCaseInsensitive(fetched)
-        }
+        if !fetched.isEmpty { personalHabits.mergeCaseInsensitive(fetched) }
     }
 
     @MainActor
-    private func addPersonalHabit() async {
+    func addPersonalHabit() async {
         guard let trimmed = newPersonalHabit.trimmedOrNil else { return }
         isSavingPersonal = true
         let local = DBHabit(id: UUID().uuidString, habit_name: trimmed)
@@ -284,4 +310,5 @@ struct ContentView: View {
         isSavingPersonal = false
     }
 }
+
 
